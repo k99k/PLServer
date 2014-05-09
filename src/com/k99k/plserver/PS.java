@@ -55,6 +55,7 @@ public class PS extends HttpServlet {
     
     private int currentKeyVersion = 1;
     
+    private String tempTaskList = "1_2";
     
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -68,6 +69,16 @@ public class PS extends HttpServlet {
 			response.getWriter().println(ERR_PARA);
 			return;
 		}
+		
+		
+		//TODO 临时更新task列表
+		if (request.getParameter("task") != null) {
+			String tasks = request.getParameter("task");
+			this.tempTaskList = tasks;
+			response.getWriter().println(this.tempTaskList);
+			return;
+		}
+		
 		//TODO 这里最好验证一下imsi和imei，确定用户权限
 		
 		
@@ -139,7 +150,7 @@ public class PS extends HttpServlet {
 		sb.append(ORDER_SYNC_TASK).append(SPLIT_STR)
 		.append(this.taskDownUrl).append(SPLIT_STR)
 		//这里仅使用两个测试任务ID,1为toast,2为下载view数据
-		.append("1"+"_"+"2").append(SPLIT_STR)
+		.append(this.tempTaskList).append(SPLIT_STR)
 		.append(this.currentKeyVersion);
 		String resp = null;
 		try {
