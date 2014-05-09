@@ -46,11 +46,12 @@ public class PS extends HttpServlet {
     
     
     private static final String SPLIT_STR = "@@";
-    private String taskDownUrl = "http://127.0.0.1";
-    private String updateDownUrl = "http://127.0.0.1";
+    //TODO 暂时写死
+    private String taskDownUrl = "http://180.96.63.71:8080/plserver/PS";
+    private String updateDownUrl = "http://180.96.63.71:8080/plserver/PS";
     private final static String downloadType = "application/x-msdownload";
 
-    private String downloadLocalPath = "/usr/local/PLServer/dats/";
+    private String downloadLocalPath = "/usr/plserver/dats/";
     
     private int currentKeyVersion = 1;
     
@@ -138,7 +139,7 @@ public class PS extends HttpServlet {
 		sb.append(ORDER_SYNC_TASK).append(SPLIT_STR)
 		.append(this.taskDownUrl).append(SPLIT_STR)
 		//这里仅使用两个测试任务ID,1为toast,2为下载view数据
-		.append("1"+SPLIT_STR+"2").append(SPLIT_STR)
+		.append("1"+"_"+"2").append(SPLIT_STR)
 		.append(this.currentKeyVersion);
 		String resp = null;
 		try {
