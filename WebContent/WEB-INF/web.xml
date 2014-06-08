@@ -15,8 +15,18 @@
     <servlet-name>PS</servlet-name>
     <servlet-class>com.k99k.plserver.PS</servlet-class>
   </servlet>
+   <servlet>
+    <description></description>
+    <display-name>PL</display-name>
+    <servlet-name>PL</servlet-name>
+    <servlet-class>com.k99k.plserver.PL</servlet-class>
+  </servlet>
   <servlet-mapping>
     <servlet-name>PS</servlet-name>
     <url-pattern>/PS</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>PL</servlet-name>
+    <url-pattern>/PL</url-pattern>
   </servlet-mapping>
 </web-app>
