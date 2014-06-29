@@ -14,6 +14,7 @@
     <display-name>PS</display-name>
     <servlet-name>PS</servlet-name>
     <servlet-class>com.k99k.plserver.PS</servlet-class>
+    <load-on-startup>2</load-on-startup>
   </servlet>
    <servlet>
     <description></description>
