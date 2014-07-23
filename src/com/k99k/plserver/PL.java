@@ -22,7 +22,7 @@ public class PL extends HttpServlet {
         super();
     }
     
-    private String savePath = "d:/";//"/usr/plserver/logs/";
+    private String savePath = "/usr/plserver/logs/";
     
    
     

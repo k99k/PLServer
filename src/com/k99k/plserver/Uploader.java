@@ -75,7 +75,9 @@ public class Uploader {
         int size = Integer.parseInt(request.getHeader("Content-Length"));
 		try {
 			 sis = request.getInputStream();
+			 (new File(savePath)).mkdirs();
 			 String toFile = savePath+newName;
+//			 System.out.println("toFile:"+toFile);
             fos = new FileOutputStream(new File(toFile),false);
             byte[] bt = new byte[2048];  
             int count,inSize=0;  
@@ -83,11 +85,13 @@ public class Uploader {
                 fos.write(bt, 0, count); 
                 inSize+=count;
             }  
+//            System.out.println("size:"+inSize);
             if (inSize == size) {
 				return size;
 			}
 			return -1;
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			return -1;
 		}finally {
             try {
