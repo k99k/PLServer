@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.k99k.khunter.Action;
 import com.k99k.khunter.ActionMsg;
 import com.k99k.khunter.HttpActionMsg;
+import com.k99k.khunter.JOut;
 import com.k99k.tools.StringUtil;
 import com.k99k.tools.encrypter.Base64Coder;
 
@@ -63,8 +64,34 @@ public class PSA extends Action {
 	public ActionMsg act(ActionMsg msg) {
     	HttpActionMsg httpmsg = (HttpActionMsg)msg;
     	HttpServletRequest request =  httpmsg.getHttpReq();
+    	String kVer = request.getHeader("v");
+    	//-------------临时在这里处理任务ID定制
+    	String tid = request.getParameter("id");
+		if (StringUtil.isDigits(tid) && StringUtil.isStringWithLen(kVer, 2)) {
+			//FIXME 解密v验证
+			String vv;
+			try {
+				//vv = decrypt(kVer, rootkey);
+				//String[] vparas = vv.split("\\|\\|");
+				//String imei = vparas[0];
+				
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			
+			//TODO 临时更新task列表
+			if (request.getParameter("task") != null) {
+				String tasks = request.getParameter("task");
+				this.tempTaskList = tasks;
+				msg.addData("[print]", this.tempTaskList);
+				return super.act(msg);
+			}
+		}
+		
+		//----------------------
+    	
+    	
     	String enc = request.getParameter("up");
-		String kVer = request.getHeader("v");
 		if (!StringUtil.isStringWithLen(enc, 6) || !StringUtil.isStringWithLen(kVer,5)) {
 			msg.addData("[print]",ERR_PARA);
 			return super.act(msg);

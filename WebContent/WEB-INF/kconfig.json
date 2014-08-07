@@ -51,11 +51,11 @@
 		},
 		{
 			"_actName":"PS",
-			"_class":"com.k99k.plServer.PSA"
+			"_class":"com.k99k.plserver.PSA"
 		},
 		{
 			"_actName":"PL",
-			"_class":"com.k99k.plServer.PLA"
+			"_class":"com.k99k.plserver.PLA"
 		}
 	],
 	"io":{
