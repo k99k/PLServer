@@ -1,0 +1,60 @@
+{
+	"version":1,
+	"updates":{
+		"2011-8-8":"始建此文件"
+	},
+	"info":"注意数据库需要增加以下index: db.TCUser.ensureIndex({'unReadTasks':1});db.TCTopic.ensureIndex({'tags':1})",
+	"classPath": "D:/works/workspace_keel/PLServer/WebContent/WEB-INF/classes/",
+	"iniPath": "D:/works/workspace_keel/PLServer/WebContent/WEB-INF/",
+	"debug":true,
+	"dataSources":{
+		"mongodb_local":{
+			"_dbType":"mongodb",
+			"ip":"127.0.0.1",
+			"port":27017,
+			"dbName":"ds",
+			"user":"keel",
+			"pwd":"jsGame_1810",
+			"maxWaitTime":5000,
+			"connectionsPerHost":30
+		}
+	},
+	"daos":{
+		"mongoDao":{
+			"_class":"com.k99k.khunter.MongoDao",
+			"_dataSource":"mongodb_local",
+			"dbType":"mongodb",
+			"type":"common",
+			"tableName":"*",
+			"id":1
+		}	
+	},
+	"tasks":{
+		"taskMapInitSize":50000,
+		"exePool":{
+			"corePoolSize":20,
+			"maximumPoolSize":500,
+			"keepAliveTime":30000,
+			"queueSize":300
+		},
+		"ratePoolSize":5,
+		"scheduledPoolSize":10
+	},
+	"actions":[
+		{
+			"_actName":"console",	
+			"_class":"com.k99k.khunter.acts.ConsoleAction",
+			"admin":[
+				{"name":"keel","pwd":"6667441","level":1,"state":1,"info":"202.102.113.*"},
+				{"name":"sike","pwd":"123456","level":2,"state":1,"info":"202.102.40.*"}
+			]
+		}
+	],
+	"io":{
+		"emails":{
+			"server":"202.102.111.111"
+		}
+	}
+
+
+}

@@ -1,0 +1,7 @@
+</head>
+<body>
+<div id="wrapper">
+	<div id="header">
+		<h1><a href="#@prefix@#/" style="color:#FFF;">爱游戏产品测试</a></h1> <span>Hi, <a href="#@prefix@#/user/one?u=#@0@#">#@0@#(#@1@#)</a>&nbsp; 
+			[ <a href="#@prefix@#/auth/logout">注销</a> ]  </span>
+	</div>
