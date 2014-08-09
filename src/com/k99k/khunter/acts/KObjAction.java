@@ -82,12 +82,12 @@ public class KObjAction extends Action{
 			String key  = httpmsg.getHttpReq().getParameter("schema_key");
 			String part  = httpmsg.getHttpReq().getParameter("schema_part");
 			if (key == null || part == null) {
-				msg.addData("[print]", "{\"re\":\"err\",\"d\":{\"schema_key\":\"schema_key or part error.\"}}");
+				msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"err\",\"d\":{\"schema_key\":\"schema_key or part error.\"}}");
 				return super.act(msg);
 			}
 			KObjConfig kc = KObjManager.findKObjConfig(key);
 			if (kc == null) {
-				msg.addData("[print]", "{\"re\":\"err\",\"d\":{\"schema_key\":\"not found.\"}}");
+				msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"err\",\"d\":{\"schema_key\":\"not found.\"}}");
 				return super.act(msg);
 			}
 			//失败原因
@@ -98,7 +98,7 @@ public class KObjAction extends Action{
 				if (StringUtil.isStringWithLen(intro, 0)) {
 					kc.setIntro(intro);
 					//print在jsp前面，所以不用remove jsp
-					msg.addData("[print]", "{\"re\":\"ok\",\"d\":{\"schema_intro\":\""+intro+"\"}}");
+					msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"ok\",\"d\":{\"schema_intro\":\""+intro+"\"}}");
 					return super.act(msg);
 				}
 				rePrint = "{\"re\":\"err\",\"d\":{\"schema_intro\":\"intro input error\"}}";
@@ -111,7 +111,7 @@ public class KObjAction extends Action{
 					if (kdc != null) {
 						//更新KObjConfig
 						kc.setDaoConfig(kdc);
-						msg.addData("[print]", "{\"re\":\"ok\",\"d\":{\""+JSON.write(kdc.toMap())+"\"}}");
+						msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"ok\",\"d\":{\""+JSON.write(kdc.toMap())+"\"}}");
 						return super.act(msg);
 					}
 					rePrint = "{\"re\":\"err\",\"d\":{\"schema_daojson\":\"KObjDaoConfig.newInstance error\"}}";
@@ -125,7 +125,7 @@ public class KObjAction extends Action{
 				if (StringUtil.isStringWithLen(colJson, 2)) {
 					KObjSchema ks = kc.getKobjSchema();
 					if(ks.setColumn((HashMap<String,Object>)JSON.read(colJson)) == 0){
-						msg.addData("[print]", "{\"re\":\"ok\",\"d\":"+colJson+"}");
+						msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"ok\",\"d\":"+colJson+"}");
 						return super.act(msg);
 					}
 					rePrint = "{\"re\":\"err\",\"d\":{\"schema_coljson\":\"ks.setColumn error\"}}";
@@ -141,7 +141,7 @@ public class KObjAction extends Action{
 					String k = ((HashMap<String,Object>)JSON.read(colJson)).get("col").toString();
 					if(ks.containsColumn(k)){
 						ks.removeColumn(k);
-						msg.addData("[print]", "{\"re\":\"ok\",\"d\":"+colJson+"}");
+						msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"ok\",\"d\":"+colJson+"}");
 						return super.act(msg);
 					}
 					rePrint = "{\"re\":\"err\",\"d\":{\"schema_coljson\":\"Column key not exsit.\"}}";
@@ -155,7 +155,7 @@ public class KObjAction extends Action{
 				if (StringUtil.isStringWithLen(indexJson, 2)) {
 					KObjSchema ks = kc.getKobjSchema();
 					if (ks.setIndex((HashMap<String,Object>)JSON.read(indexJson),true) == 0) {
-						msg.addData("[print]", "{\"re\":\"ok\",\"d\":"+indexJson+"}");
+						msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"ok\",\"d\":"+indexJson+"}");
 						return super.act(msg);
 					}
 					rePrint = "{\"re\":\"err\",\"d\":{\"schema_indexjson\":\"setIndex error\"}}";
@@ -170,7 +170,7 @@ public class KObjAction extends Action{
 					KObjSchema ks = kc.getKobjSchema();
 					String k = ((HashMap<String,Object>)JSON.read(indexJson)).get("col").toString();
 					if (ks.removeIndex(k)) {
-						msg.addData("[print]", "{\"re\":\"ok\",\"d\":"+indexJson+"}");
+						msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"ok\",\"d\":"+indexJson+"}");
 						return super.act(msg);
 					}
 					rePrint = "{\"re\":\"err\",\"d\":{\"schema_indexjson\":\"removeIndex error\"}}";
@@ -179,7 +179,7 @@ public class KObjAction extends Action{
 				}
 			}
 			//失败的情况
-			msg.addData("[print]", rePrint);
+			msg.addData(ActionMsg.MSG_PRINT, rePrint);
 			return super.act(msg);	
 		}
 		//具体KObject的crud操作
@@ -189,12 +189,12 @@ public class KObjAction extends Action{
 			String key  = httpmsg.getHttpReq().getParameter("schema_key");
 			String rePrint = "{\"re\":\"err\",\"d\":{}";
 			if (!StringUtil.isStringWithLen(key, 2) || !StringUtil.isStringWithLen(key, 2)) {
-				msg.addData("[print]", "{\"re\":\"err\",\"d\":{\"schema_key\":\"schema_key or kobj_act error.\"}}");
+				msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"err\",\"d\":{\"schema_key\":\"schema_key or kobj_act error.\"}}");
 				return super.act(msg);
 			}
 			KObjConfig kc = KObjManager.findKObjConfig(key);
 			if (kc == null) {
-				msg.addData("[print]", "{\"re\":\"err\",\"d\":{\"schema_key\":\"not found.\"}}");
+				msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"err\",\"d\":{\"schema_key\":\"not found.\"}}");
 				return super.act(msg);
 			}
 			msg.addData("key", key);
@@ -227,7 +227,7 @@ public class KObjAction extends Action{
 					HashMap<String,Object> hint = StringUtil.isStringWithLen(kobj_hint, 2) ? (HashMap<String,Object>)JSON.read(kobj_hint) : null;
 					List list = kc.getDaoConfig().findDao().query(query, fields, sortBy, skip, len, hint);
 					String d = JSON.write(list);
-					msg.addData("[print]", "{\"re\":\"ok\",\"d\":{\"list\":"+d+"}}");
+					msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"ok\",\"d\":{\"list\":"+d+"}}");
 					return super.act(msg);
 				}catch(Exception e){
 					rePrint = "{\"re\":\"err\",\"d\":{\"kobj_queryjson\":\"excpetion:"+e.getMessage()+"\"}}";
@@ -241,12 +241,12 @@ public class KObjAction extends Action{
 					long kid = Long.parseLong(kobj_id);
 					if (httpmsg.getHttpReq().getParameter("delforever") == null) {
 						if(kc.getDaoConfig().findDao().deleteOne(kid) != null){
-							msg.addData("[print]", "{\"re\":\"ok\",\"d\":{\"id\":"+kid+"}}");
+							msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"ok\",\"d\":{\"id\":"+kid+"}}");
 							return super.act(msg);
 						}
 					}else{
 						if (kc.getDaoConfig().findDao().deleteForever(Long.parseLong(kobj_id))) {
-							msg.addData("[print]", "{\"re\":\"ok\",\"d\":{\"id\":"+kid+",\"forever\":true}}");
+							msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"ok\",\"d\":{\"id\":"+kid+",\"forever\":true}}");
 							return super.act(msg);
 						}
 					}
@@ -286,11 +286,11 @@ public class KObjAction extends Action{
 							}
 						}else{
 							//kobj_id未找到
-							msg.addData("[print]", "{\"re\":\"err\",\"kobj_json\":{\"id\":"+kobj_id+" can't find!}}");
+							msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"err\",\"kobj_json\":{\"id\":"+kobj_id+" can't find!}}");
 							return super.act(msg);
 						}
 						if(re){
-							msg.addData("[print]", "{\"re\":\"ok\",\"d\":{\"id\":"+newKObj.getId()+"}}");
+							msg.addData(ActionMsg.MSG_PRINT, "{\"re\":\"ok\",\"d\":{\"id\":"+newKObj.getId()+"}}");
 							return super.act(msg);
 						}else{
 							rePrint = "{\"re\":\"err\",\"d\":{\"kobj_json\":\"setPropFromMap or dao.save error\"}}";
@@ -303,7 +303,7 @@ public class KObjAction extends Action{
 				}
 			}
 			//失败的情况
-			msg.addData("[print]", rePrint);
+			msg.addData(ActionMsg.MSG_PRINT, rePrint);
 			return super.act(msg);
 		}
 		//新增KobjConfig
@@ -314,13 +314,13 @@ public class KObjAction extends Action{
 			if (StringUtil.isStringWithLen(key, 2) && StringUtil.isStringWithLen(kcjson, 2)) {
 				int re = KObjManager.createKObjConfigToDB(key, (HashMap<String,Object>)JSON.read(kcjson));
 				if (re == 0) {
-					msg.addData("[print]", "ok");
+					msg.addData(ActionMsg.MSG_PRINT, "ok");
 					return super.act(msg);	
 				}
 				rePrint = ErrorCode.getErrorInfo(8, re);
 			}
 			//失败的情况
-			msg.addData("[print]", "err:"+rePrint);
+			msg.addData(ActionMsg.MSG_PRINT, "err:"+rePrint);
 			return super.act(msg);	
 		}
 		//保存KObjManager的配置文件
@@ -336,7 +336,7 @@ public class KObjAction extends Action{
 				if(KObjManager.saveIni()){
 					re = "ok:ok";
 				}
-				msg.addData("[print]", re);
+				msg.addData(ActionMsg.MSG_PRINT, re);
 				return super.act(msg);
 			}
 		}
@@ -349,7 +349,7 @@ public class KObjAction extends Action{
 				sb.append(str).append(",");
 			}
 			sb.deleteCharAt(sb.length()-1);
-			msg.addData("[print]", sb.toString());
+			msg.addData(ActionMsg.MSG_PRINT, sb.toString());
 			return super.act(msg);
 		}
 		//查询

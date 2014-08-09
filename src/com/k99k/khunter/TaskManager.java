@@ -428,7 +428,7 @@ public final class TaskManager {
 		String classPath = webRoot+"classes/";
 		HTManager.init(jsonFilePath);
 		
-		String tJson = "{\"task\":\"TTaskTask-appoint_491\",\"msg\":{\"act\":\"tTaskTask\",\"next\":null,\"data\":{\"uName\":\"曹雨\",\"[taskType]\":1,\"oid\":9,\"pid\":231636,\"tid\":491,\"act\":\"appoint\"}}}";
+		String tJson = "{\"task\":\"TTaskTask-appoint_491\",\"msg\":{\"act\":\"tTaskTask\",\"next\":null,\"data\":{\"uName\":\"曹雨\",\""+TASK_TYPE+"\":1,\"oid\":9,\"pid\":231636,\"tid\":491,\"act\":\"appoint\"}}}";
 		HashMap tj = (HashMap) JSON.read(tJson);
 		if (tj!=null) {
 			String tName = tj.get("task").toString();

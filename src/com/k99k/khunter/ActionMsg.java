@@ -15,6 +15,25 @@ import com.k99k.tools.JSON;
  *
  */
 public class ActionMsg {
+	
+	
+	
+	public static final String MSG_LAST_ACTION = "[actName]";
+	public static final String MSG_NEXT_ACTION_PREFIX = "[nextAct]";
+	public static final String MSG_PATH_ARRAY = "[pathAttr]";
+	public static final String MSG_NONE = "[none]";
+	public static final String MSG_PRINT = "[print]";
+	public static final String MSG_JSP = "[jsp]";
+	public static final String MSG_JSP_ATTR = "[jspAttr]";
+	public static final String MSG_REDIRECT = "[redirect]";
+	public static final String MSG_GOTO = "[goto]";
+	public static final String MSG_ROOT = "[root]";
+	public static final String MSG_ERR = "[err]";
+	/**
+	 * Action链中止的标记
+	 */
+	public static final String MSG_END = "[end]";
+	
 
 
 	/**
@@ -47,7 +66,16 @@ public class ActionMsg {
 	 * 数据集,通常为下一个Action所需要的数据
 	 */
 	private final Map<String, Object> data;
+	
+	/**
+	 * 在Action链中执行的Action数量,会有默认限制
+	 */
+	private int actCount = 0;
 
+	/**
+	 * Action链中执行上限
+	 */
+	private static int maxActCount = 20;
 	
 	/**
 	 * 在toJson中插入更多的字段,用于继承类覆盖
@@ -117,6 +145,18 @@ public class ActionMsg {
 	}
 	
 	/**
+	 * Action链是否超过最大数量,true为未超过
+	 * @return
+	 */
+	public final boolean checkActCount(){
+		this.actCount++;
+		if (this.actCount > maxActCount) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
 	 * @return the actitonName
 	 */
 	public final String getActitonName() {
@@ -143,6 +183,11 @@ public class ActionMsg {
 	public final void setNextAction(Action nextAction) {
 		this.nextAction = nextAction;
 	}
+
+	public final int getActCount() {
+		return actCount;
+	}
+
 
 
 }

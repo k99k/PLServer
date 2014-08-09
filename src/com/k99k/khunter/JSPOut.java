@@ -43,7 +43,7 @@ public class JSPOut extends Action {
 		//重新载入
 		//TODO 后期要加上管理员验证
 		this.reLoad();
-		msg.addData("[print]", "ok");
+		msg.addData(ActionMsg.MSG_PRINT, "ok");
 		return super.act(msg);
 	}
 

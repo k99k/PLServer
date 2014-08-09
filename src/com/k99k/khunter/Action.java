@@ -3,7 +3,6 @@
  */
 package com.k99k.khunter;
 
-import java.util.Date;
 
 /**
  * 同步操作,与Task异步操作相区别,多个Action之间可相互调用
@@ -48,11 +47,25 @@ public abstract class Action {
 		//此处加入进行的操作
 		
 		
-		//加入本Action处理的完成时间
-		msg.addData("action_"+this.name, new Date().toString());
-		//如果有下一个Action,则立即执行
-		if (msg.getNextAction() != null) {
-			msg.getNextAction().act(msg);
+		//加入本Action处理标识
+		msg.addData(ActionMsg.MSG_LAST_ACTION,this.name);
+		//如果有下一个Action,则立即执行--
+//		if (msg.getNextAction() != null) {
+//			msg.getNextAction().act(msg);
+//		}
+		//Action链超量则直接中止Action链,注checkActCount方法中会有++操作，所以此句必须执行
+		boolean checkActCount = msg.checkActCount();
+		//如果有终止标记
+		if (msg.containsData(ActionMsg.MSG_END) || !checkActCount) {
+			return msg;
+		}
+		//如果设置了[next]name参数指向的下一个Action，则执行下一个Action
+		Object nextAction = msg.getData(ActionMsg.MSG_NEXT_ACTION_PREFIX+this.name);
+		if (nextAction != null) {
+			Action next = ActionManager.findAction((String)nextAction);
+			if (next != null) {
+				next.act(msg);
+			}
 		}
 		return msg;
 	}

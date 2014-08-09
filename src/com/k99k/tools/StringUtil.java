@@ -282,17 +282,7 @@ public final class StringUtil {
 	}
 	
 	public static void main(String[] args) {
-		String s = "23,234234,2342,21341234,22";
-		int[] ia = stringToIntArray("23,32,342,3,,",",");
-		if (ia==null) {
-			System.out.println("null");
-		}else{
-	
-			for (int i = 0; i < ia.length; i++) {
-				System.out.println(ia[i]);
-			}
-		}
-		
-		System.out.println(s.matches("(\\d+,)*(\\d+)"));
+		int i = 23;
+		System.out.println(objToNonNegativeInt(i));
 	}
 }

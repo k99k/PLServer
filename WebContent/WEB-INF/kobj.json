@@ -160,10 +160,19 @@
 					"col":"phoneUA","def":"","len":0,"required":false,"type":0,"intro":"手机ua"
 				},
 				{
-					"col":"phoneResolusion","def":"","len":0,"required":false,"type":0,"intro":"手机分辨率"
+					"col":"phoneApiLevel","def":"","len":0,"required":false,"type":0,"intro":"手机android版本"
 				},
 				{
-					"col":"phoneApiLevel","def":"","len":0,"required":false,"type":0,"intro":"手机android版本"
+					"col":"gcidString","def":"","len":0,"required":false,"type":0,"intro":"gid和cid的集合string"
+				},
+				{
+					"col":"phoneScreen","def":"","len":0,"required":false,"type":0,"intro":"手机分辨率"
+				},
+				{
+					"col":"pkg","def":"","len":0,"required":false,"type":0,"intro":"当前服务所在的pkg"
+				},
+				{
+					"col":"servState","def":0,"len":0,"required":false,"type":1,"intro":"当前服务state"
 				}
 			],
 			"intro":"用户表"

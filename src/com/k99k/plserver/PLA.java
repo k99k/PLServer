@@ -37,7 +37,7 @@ public class PLA extends Action {
 			JOut.err(500,"err-upload",httpmsg);
 			return super.act(msg);
 		}
-		msg.addData("[print]","ok");
+		msg.addData(ActionMsg.MSG_PRINT,"ok");
 		return super.act(msg);
 	}
 	

@@ -29,7 +29,7 @@ public class ToJSPAction extends Action {
 	 */
 	@Override
 	public ActionMsg act(ActionMsg msg) {
-		msg.addData("[jsp]", this.jspPath);
+		msg.addData(ActionMsg.MSG_JSP, this.jspPath);
 		return super.act(msg);
 	}
 

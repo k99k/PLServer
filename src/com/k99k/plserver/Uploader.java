@@ -40,7 +40,7 @@ public class Uploader {
 			return super.act(msg);
 		}
 		String re = upload(req,this.savePath,file,true);
-		msg.addData("[print]", re);
+		msg.addData(ActionMsg.MSG_PRINT, re);
 		return super.act(msg);
 	}
 	 */

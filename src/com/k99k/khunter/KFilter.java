@@ -93,7 +93,7 @@ public final class KFilter implements Filter {
 		String[] pathArr = requrl.split("\\/");
 		int rn = rootNum+1;
 		//[root]为默认Action
-		String actName = (pathArr.length <= rn) ? "[root]" : pathArr[rn];
+		String actName = (pathArr.length <= rn) ? ActionMsg.MSG_ROOT : pathArr[rn];
 		//TODO 过滤静态请求,此处如果配合前端的web server过滤可省去
 		if (staticPath.containsKey(actName)) {
 //			String encoding = req.getHeader("Accept-Encoding");
@@ -132,7 +132,7 @@ public final class KFilter implements Filter {
 				//如果存在以*为name的Action，则此Action为默认Action,可匹配所有未匹配到的Action请求
 				if (hasDefaultAction) {
 					//加入actName,以便defaultAction使用
-					msg.addData("[actName]", actName);
+					msg.addData(ActionMsg.MSG_LAST_ACTION, actName);
 					action = this.defaultAction;
 				}else{
 					resp.setStatus(404);
@@ -140,40 +140,40 @@ public final class KFilter implements Filter {
 					return;
 				}
 			}
-			msg.addData("[pathArr]", pathArr);
+			msg.addData(ActionMsg.MSG_PATH_ARRAY, pathArr);
 			//msg.addData("[prefix]", staticPrefix);
 			//执行action
 			msg = action.act(msg);
 			//不处理
-			if (msg.getData("[none]")!=null) {
+			if (msg.getData(ActionMsg.MSG_NONE)!=null) {
 				return;
 			}
 			//是否打印
-			else if (msg.getData("[print]") != null) {
-				resp.getWriter().print(msg.getData("[print]"));
+			else if (msg.getData(ActionMsg.MSG_PRINT) != null) {
+				resp.getWriter().print(msg.getData(ActionMsg.MSG_PRINT));
 				return;
 			}
 			//是否发向JSP
-			else if (msg.getData("[jsp]") != null) {
-				String to = (String) msg.getData("[jsp]");
-//				Object o = msg.getData("[jspAttr]");
+			else if (msg.getData(ActionMsg.MSG_JSP) != null) {
+				String to = (String) msg.getData(ActionMsg.MSG_JSP);
+//				Object o = msg.getData(ActionMsg.MSG_JSP_ATTR);
 //				if (o != null) {
-//					req.setAttribute("[jspAttr]", o);
+//					req.setAttribute(ActionMsg.MSG_JSP_ATTR, o);
 //				}
-				req.setAttribute("[jspAttr]", msg);
+				req.setAttribute(ActionMsg.MSG_JSP_ATTR, msg);
 				RequestDispatcher rd = req.getRequestDispatcher(to);
 				rd.forward(req, resp);
 				return;
 			}
 			//是否跳转
-			else if (msg.getData("[redirect]") != null) {
-				String redirect = KFilter.getPrefix()+(String) msg.getData("[redirect]");
+			else if (msg.getData(ActionMsg.MSG_REDIRECT) != null) {
+				String redirect = KFilter.getPrefix()+(String) msg.getData(ActionMsg.MSG_REDIRECT);
 				resp.sendRedirect(redirect);
 				return;
 			}
 			//是否直接跳转
-			else if (msg.getData("[goto]") != null) {
-				String link = (String) msg.getData("[goto]");
+			else if (msg.getData(ActionMsg.MSG_GOTO) != null) {
+				String link = (String) msg.getData(ActionMsg.MSG_GOTO);
 				resp.sendRedirect(link);
 				return;
 			}
@@ -252,7 +252,7 @@ public final class KFilter implements Filter {
 	public static final String actPath(ActionMsg msg,int pathNum,String defaultStr){
 		//FIXME 测试时多计算了Servlet
 		pathNum = pathNum+rootNum;
-		String[] pathArr = (String[]) msg.getData("[pathArr]");
+		String[] pathArr = (String[]) msg.getData(ActionMsg.MSG_PATH_ARRAY);
 		String subact = (pathArr.length <= pathNum) ? defaultStr : pathArr[pathNum];
 		return subact;
 	}

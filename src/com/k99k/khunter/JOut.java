@@ -20,9 +20,9 @@ public class JOut {
 	 * @param errCode
 	 * @param httpmsg
 	 */
-	public static final void err(int errCode,HttpActionMsg httpmsg){
-		httpmsg.getHttpResp().setStatus(errCode);
-		httpmsg.addData("[print]", "E"+String.valueOf(errCode));
+	public static final void err(int errState,HttpActionMsg httpmsg){
+		httpmsg.getHttpResp().setStatus(errState);
+		httpmsg.addData(ActionMsg.MSG_PRINT, "E"+String.valueOf(errState));
 	}
 	
 	/**
@@ -31,9 +31,16 @@ public class JOut {
 	 * @param msg 错误消息
 	 * @param httpmsg
 	 */
-	public static final void err(int errCode,String msg,HttpActionMsg httpmsg){
-		httpmsg.getHttpResp().setStatus(errCode);
-		httpmsg.addData("[print]", msg);
+	public static final void err(int errState,String msg,HttpActionMsg httpmsg){
+		httpmsg.getHttpResp().setStatus(errState);
+		httpmsg.addData(ActionMsg.MSG_PRINT, "E"+errState+msg);
+		httpmsg.addData(ActionMsg.MSG_END, true);
+	}
+	
+	public static final void err(int errState,int errCode,HttpActionMsg httpmsg){
+		httpmsg.getHttpResp().setStatus(errState);
+		httpmsg.addData(ActionMsg.MSG_PRINT, "E"+errState+errCode);
+		httpmsg.addData(ActionMsg.MSG_END, true);
 	}
 
 	/**
@@ -42,7 +49,7 @@ public class JOut {
 	 * @param httpmsg
 	 */
 	public static final void txtOut(String re,HttpActionMsg httpmsg){
-		httpmsg.addData("[print]", re);
+		httpmsg.addData(ActionMsg.MSG_PRINT, re);
 	}
 	
 	/**
@@ -51,7 +58,7 @@ public class JOut {
 	 * @param httpmsg
 	 */
 	public static final void txtOut(String reTemplet,String[] data,HttpActionMsg httpmsg){
-		httpmsg.addData("[print]", templetOut(reTemplet,data));
+		httpmsg.addData(ActionMsg.MSG_PRINT, templetOut(reTemplet,data));
 	}
 	
 	/**
@@ -60,7 +67,7 @@ public class JOut {
 	 * @param httpmsg
 	 */
 	public static final void txtOut(String[] strArr,String[] data,HttpActionMsg httpmsg){
-		httpmsg.addData("[print]", templetOut(strArr,data));
+		httpmsg.addData(ActionMsg.MSG_PRINT, templetOut(strArr,data));
 	}
 	
 	/**

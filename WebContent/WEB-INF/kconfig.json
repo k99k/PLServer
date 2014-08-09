@@ -40,6 +40,8 @@
 		"ratePoolSize":5,
 		"scheduledPoolSize":10
 	},
+	"actionIntro":"_actName=@actname用来引用已经初始化过的act,_actName=*表示为默认Action，name为空时指向此默认Action"
+	,
 	"actions":[
 		{
 			"_actName":"console",	
@@ -51,11 +53,31 @@
 		},
 		{
 			"_actName":"PS",
-			"_class":"com.k99k.plserver.PSA"
+			"_class":"com.k99k.plserver.UpAction"
 		},
 		{
 			"_actName":"PL",
-			"_class":"com.k99k.plserver.PLA"
+			"_class":"com.k99k.plserver.LogAction"
+		},
+		{
+			"_actName":"auth",
+			"_class":"com.k99k.plserver.AuthAction"
+		},
+		{
+			"_actName":"user",
+			"_class":"com.k99k.plserver.UserAction"
+		},
+		{
+			"_actName":"task",
+			"_class":"com.k99k.plserver.TaskAction"
+		},
+		{
+			"_actName":"sdkVer",
+			"_class":"com.k99k.plserver.SdkVerAction"
+		},
+		{
+			"_actName":"end",
+			"_class":"com.k99k.plserver.EndAction"
 		}
 	],
 	"io":{
