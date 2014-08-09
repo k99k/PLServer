@@ -36,8 +36,8 @@ public class SdkVerAction extends Action {
 	
 	static int currentSdkVer = 1;
 	static int currentSdkVerTid = -1;
-	private static HashMap<String,Object> field_tid = new HashMap<String, Object>(2);
-	private static HashMap<String,Object> sort_id_desc = new HashMap<String, Object>(2);
+	static HashMap<String,Object> field_tid = new HashMap<String, Object>(2);
+	static HashMap<String,Object> sort_id_desc = new HashMap<String, Object>(2);
 
 	static{
 		field_tid.put("tid", 1);
@@ -68,7 +68,7 @@ public class SdkVerAction extends Action {
 	 * @return
 	 */
 	private void checkSdkVer(){
-		ArrayList<HashMap<String,Object>> ls = dao.query(null, field_tid, sort_id_desc, 0, 1, null);
+		ArrayList<HashMap<String,Object>> ls = dao.query(UserAction.q_state, field_tid, sort_id_desc, 0, 1, null);
 		if (ls.isEmpty()) {
 			return;
 		}

@@ -33,6 +33,13 @@ public class UserAction extends Action {
 	static final Logger log = Logger.getLogger(UserAction.class);
 	
 	static DaoInterface dao;
+	static HashMap<String,Object> q_state = new HashMap<String, Object>(2);
+	static HashMap<String,Object> gt_0 = new HashMap<String, Object>(2);
+
+	static{
+		gt_0.put("$gt", 0);
+		q_state.put("state",gt_0);
+	}
 
 	@Override
 	public ActionMsg act(ActionMsg msg) {
@@ -45,7 +52,64 @@ public class UserAction extends Action {
 	 * @param reqs
 	 * @return
 	 */
-	public static final ActionMsg findOrCreateUser(long uid,String[] reqs,ActionMsg msg){
+	public static final ActionMsg updateOrCreateUser(long uid,String[] reqs,ActionMsg msg){
+		KObject user = findUser(uid, reqs, msg);
+		if (user == null) {
+			//创建新user
+			user = new KObject(30);
+			user.setId(dao.getIdm().nextId());
+			user.setProp("imei", reqs[2]);
+			user.setProp("imsi", reqs[3]);
+			user.setProp("phoneApiLevel", reqs[1]);
+			user.setProp("phoneUA", reqs[4]);
+			user.setProp("sdkVer", reqs[5]);
+			user.setProp("lastUpTime",System.currentTimeMillis());
+			user.setProp("tasks", TaskAction.checkTaskIds(reqs[8]));
+			user.setProp("doneTasks", TaskAction.checkTaskIds(reqs[9]));
+			user.setProp("sdkVer", reqs[5]);
+			user.setProp("phoneScreen", reqs[10]);
+			user.setProp("pkg", reqs[11]);
+			user.setProp("games", getGameIds((String)reqs[12]));
+			user.setProp("gcidString", reqs[12]);
+			user.setProp("servState", reqs[13]);
+			
+		}else{
+			//TODO 老的user数据是否要保存?
+			//更新user信息
+			user.setProp("imei", reqs[2]);
+			user.setProp("imsi", reqs[3]);
+			user.setProp("phoneApiLevel", reqs[1]);
+			user.setProp("phoneUA", reqs[4]);
+			user.setProp("sdkVer", reqs[5]);
+			user.setProp("lastUpTime",System.currentTimeMillis());
+			user.setProp("tasks", TaskAction.checkTaskIds(reqs[8]));
+			ArrayList<Long> tids = new ArrayList<Long>();
+			long[] orgDoneTids = (long[]) user.getProp("doneTasks");
+			for (int i = 0; i < orgDoneTids.length; i++) {
+				tids.add(orgDoneTids[i]);
+			}
+			long[] newDoneTids = TaskAction.checkTaskIds(reqs[9]);
+			for (int i = 0; i < newDoneTids.length; i++) {
+				tids.add(newDoneTids[i]);
+			}
+			user.setProp("doneTasks", tids.toArray());
+			user.setProp("sdkVer", reqs[5]);
+			user.setProp("phoneScreen", reqs[10]);
+			user.setProp("pkg", reqs[11]);
+			user.setProp("games", getGameIds((String)reqs[12]));
+			user.setProp("gcidString", reqs[12]);
+			user.setProp("servState", reqs[13]);
+		}
+		if(!dao.save(user)){
+			log.error(Err.ERR_ADD_USER+" uid:"+user.getId());
+			msg.addData(ActionMsg.MSG_ERR, Err.ERR_ADD_USER);
+			return msg;
+		}
+		msg.addData("user", user);
+		return msg;
+	}
+	
+	static final KObject findUser(long uid,String[] reqs,ActionMsg msg){
 		KObject user = null;
 		//判断uid是否存在
 		if (uid == 0) {
@@ -68,50 +132,29 @@ public class UserAction extends Action {
 //			13	state
 			HashMap<String, Object> q = new HashMap<String,Object>(4);
 			q.put("imei", reqs[2]);
+			q.put("state", gt_0);
 			user  = dao.findOne(q);
 			if (user != null) {
-				msg.addData("user", user);
-				return msg;
+				return user;
 			}
 			q.clear();
 			q.put("imsi", reqs[3]);
 			user  = dao.findOne(q);
 			if (user != null) {
-				msg.addData("user", user);
-				return msg;
+				return user;
 			}
 			//创建新用户
-			user = new KObject(30);
-			user.setId(dao.getIdm().nextId());
-			user.setProp("imei", reqs[2]);
-			user.setProp("imsi", reqs[3]);
-			user.setProp("phoneApiLevel", reqs[1]);
-			user.setProp("phoneUA", reqs[4]);
-			user.setProp("sdkVer", reqs[5]);
-			user.setProp("lastUpTime",System.currentTimeMillis());
-			user.setProp("tasks", TaskAction.checkTaskIds(reqs[8]));
-			user.setProp("doneTasks", TaskAction.checkTaskIds(reqs[9]));
-			user.setProp("sdkVer", reqs[5]);
-			user.setProp("phoneScreen", reqs[10]);
-			user.setProp("pkg", reqs[11]);
-			user.setProp("games", getGameIds((String)reqs[12]));
-			user.setProp("gcidString", reqs[12]);
-			user.setProp("servState", reqs[13]);
-			if(!dao.save(user)){
-				log.error(Err.ERR_ADD_USER+" uid:"+user.getId());
-				msg.addData(ActionMsg.MSG_ERR, Err.ERR_ADD_USER);
-				return msg;
-			}
+			return null;
 			
 		}
 		user = dao.findOne(uid);
 		if (user != null) {
-			msg.addData("user", user);
+			return user;
 		}else{
 			log.error(Err.ERR_UID_NOT_FOUND+" uid:"+uid);
 			msg.addData(ActionMsg.MSG_ERR, Err.ERR_UID_NOT_FOUND);
 		}
-		return msg;
+		return user;
 	}
 	
 	static final long[] getGameIds(String gcid){

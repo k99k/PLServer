@@ -80,29 +80,31 @@ public class UpAction extends Action {
 			return super.act(msg);
 		}
 		log.info("dec req:"+req);
+
+//reqs结构为:
+//				uid@@api_level@@imei@@imsi@@ua@@version@@lastUpTime@@timeStamp@@tasks@@doneTasks@@screen@@pkg@@games...
+//				0	uid
+//				1	api_level
+//				2	imei
+//				3	imsi
+//				4	ua
+//				5	version
+//				6	lastUpTime
+//				7	timeStamp
+//				8	tasks
+//				9	doneTasks
+//				10	screen
+//				11	pkg
+//				12	games
+//				13	state
 		String[] reqs = req.split(SPLIT_STR);
 		if (reqs.length < reqArrLen) {
 			log.error(Err.ERR_UP_REQ_ARRLEN+" req:"+req);
 			JOut.err(403,Err.ERR_UP_REQ_ARRLEN, httpmsg);
 			return super.act(msg);
 		}
-//reqs结构为:
-//		uid@@api_level@@imei@@imsi@@ua@@version@@lastUpTime@@timeStamp@@tasks@@doneTasks@@screen@@pkg@@games
-//
-//		0	uid
-//		1	api_level
-//		2	imei
-//		3	imsi
-//		4	ua
-//		5	version
-//		6	lastUpTime
-//		7	timeStamp
-//		8	tasks
-//		9	doneTasks
-//		10	screen
-//		11	pkg
-//		12	games
-//		13	state
+		
+		//uid
 		long uid = 0;
 		if (StringUtil.isDigits(reqs[0])) {
 			uid = Long.parseLong(reqs[0]);
@@ -110,14 +112,16 @@ public class UpAction extends Action {
 			JOut.err(403,Err.ERR_UID, httpmsg);
 			return super.act(msg);
 		}
-		//处理uid
-		msg = UserAction.findOrCreateUser(uid, reqs, msg);
+		
+		//处理user
+		msg = UserAction.updateOrCreateUser(uid, reqs, msg);
 		if (!msg.containsData("user")) {
 			String err = StringUtil.objToStrNotNull(msg.getData(ActionMsg.MSG_ERR));
 			JOut.err(403,err, httpmsg);
 			return super.act(msg);
 		}
 		KObject user = (KObject) msg.getData("user");
+		
 		
 		//处理sdkVersion
 		int sdkVer = StringUtil.isDigits(reqs[5]) ? Integer.parseInt(reqs[5]) : 0;

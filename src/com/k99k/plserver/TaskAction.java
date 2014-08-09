@@ -3,6 +3,8 @@
  */
 package com.k99k.plserver;
 
+import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 
 import com.k99k.khunter.Action;
@@ -29,12 +31,28 @@ public class TaskAction extends Action {
 	static final Logger log = Logger.getLogger(TaskAction.class);
 
 	static DaoInterface dao;
+	
+	private static HashMap<String,String> uid_task = new HashMap<String, String>();
+	private static HashMap<String,String> gid_task = new HashMap<String, String>();
+	private static HashMap<String,String> tag_task = new HashMap<String, String>();
+	private static HashMap<String,String> level_task = new HashMap<String, String>();
 
 	@Override
 	public ActionMsg act(ActionMsg msg) {
 		//FIXME task管理：增删改
 		
+		
+		//TODO 考虑将任务缓存起来
+		
+		
 		return super.act(msg);
+	}
+	
+	/**
+	 * 初始化任务缓存
+	 */
+	private void initTaskCache(){
+		
 	}
 	
 	/**
@@ -43,8 +61,15 @@ public class TaskAction extends Action {
 	 * @return
 	 */
 	public static final String synTasks(KObject user,HttpActionMsg msg){
+		StringBuilder sb = new StringBuilder();
+		long[] done = (long[]) user.getProp("doneTasks");
 		//TODO 查找uid的任务
-		
+		if (uid_task.containsKey(user.getId())) {
+			//是否有任务
+			
+			//是否在已完成任务中
+			
+		}
 		//TODO 查找gid的任务
 		
 		//TODO 查找tag的任务
@@ -53,7 +78,6 @@ public class TaskAction extends Action {
 		
 		
 		
-		StringBuilder sb = new StringBuilder();
 		
 		
 		
@@ -85,6 +109,7 @@ public class TaskAction extends Action {
 	@Override
 	public void init() {
 		dao = DaoManager.findDao("dsTaskDao");
+		this.initTaskCache();
 		super.init();
 	}
 	
