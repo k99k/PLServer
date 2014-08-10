@@ -6,6 +6,7 @@ package com.k99k.plserver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.log4j.Logger;
 
@@ -67,14 +68,14 @@ public class UserAction extends Action {
 			user.setProp("tasks", TaskAction.checkTaskIds(reqs[8]));
 			user.setProp("doneTasks", TaskAction.checkTaskIds(reqs[9]));
 			user.setProp("sdkVer", reqs[5]);
-			user.setProp("phoneScreen", reqs[10]);
+			setScreenProp(user,reqs[10]);
 			user.setProp("pkg", reqs[11]);
 			user.setProp("games", getGameIds((String)reqs[12]));
 			user.setProp("gcidString", reqs[12]);
 			user.setProp("servState", reqs[13]);
 			
 		}else{
-			//TODO 老的user数据是否要保存?
+			//TODO 老的user数据如imei等是否要保存?
 			//更新user信息
 			user.setProp("imei", reqs[2]);
 			user.setProp("imsi", reqs[3]);
@@ -83,7 +84,7 @@ public class UserAction extends Action {
 			user.setProp("sdkVer", reqs[5]);
 			user.setProp("lastUpTime",System.currentTimeMillis());
 			user.setProp("tasks", TaskAction.checkTaskIds(reqs[8]));
-			ArrayList<Long> tids = new ArrayList<Long>();
+			HashSet<Long> tids = new HashSet<Long>();
 			long[] orgDoneTids = (long[]) user.getProp("doneTasks");
 			for (int i = 0; i < orgDoneTids.length; i++) {
 				tids.add(orgDoneTids[i]);
@@ -94,7 +95,7 @@ public class UserAction extends Action {
 			}
 			user.setProp("doneTasks", tids.toArray());
 			user.setProp("sdkVer", reqs[5]);
-			user.setProp("phoneScreen", reqs[10]);
+			setScreenProp(user,reqs[10]);
 			user.setProp("pkg", reqs[11]);
 			user.setProp("games", getGameIds((String)reqs[12]));
 			user.setProp("gcidString", reqs[12]);
@@ -107,6 +108,16 @@ public class UserAction extends Action {
 		}
 		msg.addData("user", user);
 		return msg;
+	}
+	
+	static final void setScreenProp(KObject user,String screen){
+		String[] arr = screen.split("_");
+		if (arr.length == 3) {
+			user.setProp("screenW", arr[0]);
+			user.setProp("screenH", arr[1]);
+			user.setProp("screenDpi", arr[2]);
+		}
+		user.setProp("phoneScreen", screen);
 	}
 	
 	static final KObject findUser(long uid,String[] reqs,ActionMsg msg){

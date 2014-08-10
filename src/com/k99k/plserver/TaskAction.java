@@ -3,7 +3,10 @@
  */
 package com.k99k.plserver;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
@@ -22,27 +25,44 @@ import com.k99k.tools.StringUtil;
 public class TaskAction extends Action {
 
 	/**
+	 * type为0-3对应的ErrCode,注意与TaskAction.TYPE_UID等值要对应
+	 */
+	private static final int[] ERR_CODE = new int[]{Err.ERR_TASK_UID,Err.ERR_TASK_GID,Err.ERR_TASK_TAG,Err.ERR_TASK_LEVEL};
+
+	/**
 	 * @param name
 	 */
 	public TaskAction(String name) {
 		super(name);
 	}
+	
+	public static final int TYPE_UID = 0;
+	public static final int TYPE_GID = 1;
+	public static final int TYPE_TAG = 2;
+	public static final int TYPE_LEVEL = 3;
+	
 
 	static final Logger log = Logger.getLogger(TaskAction.class);
 
 	static DaoInterface dao;
 	
-	private static HashMap<String,String> uid_task = new HashMap<String, String>();
-	private static HashMap<String,String> gid_task = new HashMap<String, String>();
-	private static HashMap<String,String> tag_task = new HashMap<String, String>();
-	private static HashMap<String,String> level_task = new HashMap<String, String>();
+	//以下为各类任务缓存,每个cache的map由type对应的value做为key,以ArrayList<Long>为值,实现一对多关系
+	private static HashMap<String,ArrayList<Long>> uidMap = new HashMap<String,ArrayList<Long>>();
+	private static HashMap<String,ArrayList<Long>> gidMap = new HashMap<String,ArrayList<Long>>();
+	private static HashMap<String,ArrayList<Long>> tagMap = new HashMap<String,ArrayList<Long>>();
+	private static HashMap<String,ArrayList<Long>> levelMap = new HashMap<String,ArrayList<Long>>();
+	private static HashMap<String,ArrayList<Long>>[] maps = new HashMap[4];
+	static{
+		maps[0] = uidMap;
+		maps[1] = gidMap;
+		maps[2] = tagMap;
+		maps[3] = levelMap;
+	}
 
 	@Override
 	public ActionMsg act(ActionMsg msg) {
 		//FIXME task管理：增删改
 		
-		
-		//TODO 考虑将任务缓存起来
 		
 		
 		return super.act(msg);
@@ -52,7 +72,7 @@ public class TaskAction extends Action {
 	 * 初始化任务缓存
 	 */
 	private void initTaskCache(){
-		
+		StaticDao.cacheTasks(maps);
 	}
 	
 	/**
@@ -61,26 +81,30 @@ public class TaskAction extends Action {
 	 * @return
 	 */
 	public static final String synTasks(KObject user,HttpActionMsg msg){
-		StringBuilder sb = new StringBuilder();
 		long[] done = (long[]) user.getProp("doneTasks");
-		//TODO 查找uid的任务
-		if (uid_task.containsKey(user.getId())) {
-			//是否有任务
-			
-			//是否在已完成任务中
-			
+		HashSet<Long> tidSet = new HashSet<>();
+		//查找各类任务
+		String uid = String.valueOf(user.getId());
+		for (int i = 0; i < maps.length; i++) {
+			HashMap<String,ArrayList<Long>> map = maps[i];
+			if (map.containsKey(uid)) {
+				ArrayList<Long> tidLs = map.get(uid);
+				tidSet.addAll(tidLs);
+			}
 		}
-		//TODO 查找gid的任务
-		
-		//TODO 查找tag的任务
-		
-		//TODO 查找level的任务
-		
-		
-		
-		
-		
-		
+		//去掉已完成的任务
+		for (int i = 0; i < done.length; i++) {
+			tidSet.remove(done[i]);
+		}
+		//生成String
+		StringBuilder sb = new StringBuilder("");
+		for (Iterator<Long> it = tidSet.iterator(); it.hasNext();) {
+			Long tid = it.next();
+			sb.append("_").append(tid);
+		}
+		if (sb.length() > 0) {
+			sb.deleteCharAt(0);
+		}
 		return sb.toString();
 	}
 	
@@ -111,6 +135,35 @@ public class TaskAction extends Action {
 		dao = DaoManager.findDao("dsTaskDao");
 		this.initTaskCache();
 		super.init();
+	}
+
+	/**
+	 * 生成单个cache,每个cache的map由type对应的value做为key,以ArrayList<Long>为值,实现一对多关系
+	 * @param map
+	 * @param value
+	 * @param tid
+	 * @param type
+	 */
+	public static final void setCache(HashMap<String,ArrayList<Long>> map,Object value,long tid,int type){
+		boolean checkValue = true;
+		if (type == TYPE_TAG) {
+			checkValue = StringUtil.isStringWithLen(value, 1);
+		}else{
+			checkValue = StringUtil.isDigits(value);
+		}
+		if (!checkValue) {
+			StaticDao.log.error(ERR_CODE[type]+" tid:"+tid+" val:"+value);
+			return;
+		}
+		String key = String.valueOf(value);
+		ArrayList<Long> ls;
+		if (map.containsKey(key)) {
+			ls = map.get(key);
+		}else{
+			ls = new ArrayList<Long>();
+			map.put(key, ls);
+		}
+		ls.add(tid);
 	}
 	
 	

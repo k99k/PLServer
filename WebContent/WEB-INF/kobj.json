@@ -65,6 +65,9 @@
 			},
 			"indexes":[
 				{
+					"col":"state","unique":false,"asc":false,"type":"type","intro":"intro"
+				},
+				{
 					"col":"tid","unique":false,"asc":false,"type":"type","intro":"intro"
 				}
 			],
@@ -80,6 +83,9 @@
 				},
 				{
 					"col":"tid","def":0,"len":0,"required":true,"type":4,"intro":"对应的任务id"
+				},
+				{
+					"col":"state","def":0,"len":0,"required":false,"type":1,"intro":"状态码,-1为删除"
 				}
 			],
 			"intro":"sdk版本及参数更新"
@@ -173,6 +179,15 @@
 				},
 				{
 					"col":"servState","def":0,"len":0,"required":false,"type":1,"intro":"当前服务state"
+				},
+				{
+					"col":"screenW","def":0,"len":0,"required":false,"type":1,"intro":"屏幕w"
+				},
+				{
+					"col":"screenH","def":0,"len":0,"required":false,"type":1,"intro":"屏幕H"
+				},
+				{
+					"col":"screenDpi","def":0,"len":0,"required":false,"type":1,"intro":"屏幕Dpi"
 				}
 			],
 			"intro":"用户表"
@@ -188,10 +203,13 @@
 			},
 			"indexes":[
 				{
-					"col":"createTime","unique":false,"asc":false,"type":"type","intro":"intro"
+					"col":"valTime","unique":false,"asc":false,"type":"type","intro":"intro"
 				},
 				{
-					"col":"valTime","unique":false,"asc":false,"type":"type","intro":"intro"
+					"col":"subType","unique":false,"asc":false,"type":"type","intro":"intro"
+				},
+				{
+					"col":"state","unique":false,"asc":false,"type":"type","intro":"intro"
 				},
 				{
 					"col":"type","unique":false,"asc":false,"type":"type","intro":"intro"
@@ -199,7 +217,7 @@
 			],
 			"columns":[
 				{
-					"col":"type","def":0,"len":0,"required":true,"type":1,"intro":"维度:gameId\/uid\/tag\/level..."
+					"col":"type","def":0,"len":0,"required":false,"type":1,"intro":"维度:0为uid,1为gid,2为tag,3为level"
 				},
 				{
 					"col":"valTime","def":0,"len":0,"required":true,"type":4,"intro":"有效时间,在此时间之前有效"
@@ -212,6 +230,15 @@
 				},
 				{
 					"col":"info","def":"","len":0,"required":false,"type":0,"intro":"说明"
+				},
+				{
+					"col":"state","def":0,"len":0,"required":false,"type":1,"intro":"状态码,-1表示删除"
+				},
+				{
+					"col":"value","def":"","len":0,"required":false,"type":0,"intro":"对应type的值,如uid,tag等"
+				},
+				{
+					"col":"subType","def":0,"len":0,"required":false,"type":1,"intro":"二级类型,gid下面0为more,1为exit"
 				}
 			],
 			"intro":"任务"

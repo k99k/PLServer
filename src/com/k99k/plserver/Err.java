@@ -33,5 +33,9 @@ public class Err {
 	public static final int ERR_UP_REQ_ARRLEN = 516;
 	public static final int ERR_NEW_VER_PARA = 517;
 	public static final int ERR_ENCRYPT = 518;
+	public static final int ERR_TASK_UID = 519;
+	public static final int ERR_TASK_GID = 520;
+	public static final int ERR_TASK_TAG = 521;
+	public static final int ERR_TASK_LEVEL = 522;
 	
 }
