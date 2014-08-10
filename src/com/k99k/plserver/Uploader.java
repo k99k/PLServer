@@ -11,7 +11,7 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 文件上传动作类
+ * 文件上传,私有http协议,需要client配合
  * @author keel
  *
  */
@@ -24,26 +24,6 @@ public class Uploader {
 		super();
 	}
 	
-	
-	
-
-	/* (non-Javadoc)
-	 * @see com.k99k.khunter.Action#act(com.k99k.khunter.ActionMsg)
-	
-	@Override
-	public ActionMsg act(ActionMsg msg) {
-		HttpActionMsg httpmsg = (HttpActionMsg)msg;
-		HttpServletRequest req = httpmsg.getHttpReq();
-		String file = req.getParameter("f");
-		if (!StringUtil.isStringWithLen(file, 1)) {
-			JOut.err(400, httpmsg);
-			return super.act(msg);
-		}
-		String re = upload(req,this.savePath,file,true);
-		msg.addData(ActionMsg.MSG_PRINT, re);
-		return super.act(msg);
-	}
-	 */
 	
 	/**
 	 * 在文件路径中增加后缀,如aaa.txt增加为aaa_1.txt,其中_1为tail

@@ -57,7 +57,13 @@
 		},
 		{
 			"_actName":"PL",
-			"_class":"com.k99k.plserver.LogAction"
+			"_class":"com.k99k.plserver.LogAction",
+			"savePath":"d:/dslogs/"
+		},
+		{
+			"_actName":"logTask",
+			"_class":"com.k99k.plserver.LogTask",
+			"unzipPath":"d:/dsUnzip/"
 		},
 		{
 			"_actName":"auth",

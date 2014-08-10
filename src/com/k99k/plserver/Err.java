@@ -37,5 +37,15 @@ public class Err {
 	public static final int ERR_TASK_GID = 520;
 	public static final int ERR_TASK_TAG = 521;
 	public static final int ERR_TASK_LEVEL = 522;
+	public static final int ERR_LOG_F = 523;
+	public static final int ERR_LOG_UPLOAD = 524;
+	public static final int ERR_LOG_FILE_NOT_FOUND = 525;
+	public static final int ERR_LOG_FILE_UNZIP = 526;
+	public static final int ERR_LOG_DECRYPT = 527;
+	public static final int ERR_LOG_READ = 528;
+	public static final int ERR_LOG_ZIP_NO_FILE = 529;
+	
+	
+	
 	
 }
