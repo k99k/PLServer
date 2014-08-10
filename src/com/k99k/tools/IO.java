@@ -35,7 +35,7 @@ public final class IO {
 		String str;
 		StringBuilder sb = new StringBuilder();
 		while ((str = in.readLine()) != null) {
-			sb.append(str);
+			sb.append(str).append("\r\n");
 		}
 		return sb.toString();
 	}

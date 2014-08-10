@@ -7,6 +7,7 @@ package com.k99k.plserver;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
@@ -85,7 +86,7 @@ public class UserAction extends Action {
 			user.setProp("lastUpTime",System.currentTimeMillis());
 			user.setProp("tasks", TaskAction.checkTaskIds(reqs[8]));
 			HashSet<Long> tids = new HashSet<Long>();
-			long[] orgDoneTids = (long[]) user.getProp("doneTasks");
+			long[] orgDoneTids = StaticDao.transDBListToArr(user.getProp("doneTasks"));
 			for (int i = 0; i < orgDoneTids.length; i++) {
 				tids.add(orgDoneTids[i]);
 			}
@@ -93,7 +94,15 @@ public class UserAction extends Action {
 			for (int i = 0; i < newDoneTids.length; i++) {
 				tids.add(newDoneTids[i]);
 			}
-			user.setProp("doneTasks", tids.toArray());
+			int len = tids.size();
+			long[] tidsArr = new long[len];
+			int i = 0;
+			for (Iterator<Long> it = tids.iterator(); it.hasNext();) {
+				Long lo = it.next();
+				tidsArr[i] = lo;
+				i++;
+			}
+			user.setProp("doneTasks", tidsArr);
 			user.setProp("sdkVer", reqs[5]);
 			setScreenProp(user,reqs[10]);
 			user.setProp("pkg", reqs[11]);

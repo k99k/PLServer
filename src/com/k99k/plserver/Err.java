@@ -54,8 +54,8 @@ public class Err {
 	public static final int ERR_LOG_GID = 537;
 	public static final int ERR_LOG_CID = 538;
 	public static final int ERR_LOG_SAVETODB = 539;
+	public static final int ERR_DBLIST_TOARR = 540;
 
-	
 	
 	
 }

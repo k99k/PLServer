@@ -133,13 +133,13 @@ public class UpAction extends Action {
 		}
 		
 		//处理任务
-		String tasks = TaskAction.synTasks(user,httpmsg);
+		String tasks = TaskAction.synTasks(user,httpmsg)+"@@";
 		if (StringUtil.isStringWithLen(tasks, 1)) {
 			msg = this.resp(this.makeResp(uid, tasks,this.taskDownUrl), iKey, httpmsg);
 			return super.act(msg);
 		}
 		//无任务
-		msg = this.resp(this.makeResp(uid, "",this.taskDownUrl), iKey, httpmsg);
+		msg = this.resp(this.makeResp(uid, "@@",this.taskDownUrl), iKey, httpmsg);
 		
 		
 //		Object lastAct = msg.getData(ActionMsg.MSG_LAST_ACTION);
@@ -175,6 +175,7 @@ public class UpAction extends Action {
 		try {
 			String enc  = AuthAction.encrypt(resp,key);
 			msg.addData(ActionMsg.MSG_PRINT,enc);
+			System.out.println("enc:"+enc);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(Err.ERR_ENCRYPT+" resp:"+resp);

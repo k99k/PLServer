@@ -81,7 +81,7 @@ public class TaskAction extends Action {
 	 * @return
 	 */
 	public static final String synTasks(KObject user,HttpActionMsg msg){
-		long[] done = (long[]) user.getProp("doneTasks");
+		long[] done =(long[])user.getProp("doneTasks");
 		HashSet<Long> tidSet = new HashSet<>();
 		//查找各类任务
 		String uid = String.valueOf(user.getId());

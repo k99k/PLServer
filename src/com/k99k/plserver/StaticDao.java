@@ -12,6 +12,8 @@ import com.k99k.khunter.DaoInterface;
 import com.k99k.khunter.DaoManager;
 import com.k99k.khunter.DataSourceInterface;
 import com.k99k.khunter.MongoDao;
+import com.k99k.tools.StringUtil;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
@@ -76,7 +78,25 @@ public class StaticDao extends MongoDao {
 		}
 	}
 	
-	
+	public static final long[] transDBListToArr(Object dbList){
+		try {
+			BasicDBList ls = (BasicDBList)dbList;
+			int len = ls.size();
+			long[] re = new long[ls.size()];
+			for (int i = 0; i < len; i++) {
+				Object obj = ls.get(i);
+				if (StringUtil.isDigits(obj)) {
+					re[i] = Long.parseLong(String.valueOf(obj));
+				}
+			}
+			return re;
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(Err.ERR_DBLIST_TOARR+" dbList;"+dbList.toString(),e);
+			return new long[]{};
+		}
+		
+	}
 	
 	
 }

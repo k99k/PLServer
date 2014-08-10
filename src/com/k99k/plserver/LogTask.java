@@ -70,18 +70,17 @@ public class LogTask extends Action {
 					log.error(Err.ERR_LOG_READ+" file:"+fullPath);
 					continue;
 				}
-				String decTxt = AuthAction.decrypt(logTxt, iKey);
-				if (!StringUtil.isStringWithLen(decTxt, 1)) {
-					log.error(Err.ERR_LOG_DECRYPT+" file:"+fullPath);
-					continue;
-				}
 				//处理log内容
 				String[] fArr = file.split("_");
 				long uid = 0;
 				if (fArr.length>1 && StringUtil.isDigits(fArr[0])) {
 					uid = Long.parseLong(fArr[0]);
 				}
-				readLogTxt(decTxt,uid);
+				String[] logEnc = logTxt.split("\r\n");
+				for (int j = 0; j < logEnc.length; j++) {
+					String decTxt = AuthAction.decrypt(logEnc[j], iKey);
+					readLogTxt(decTxt,uid);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 				log.error(Err.ERR_LOG_READ+" file:"+fullPath,e);
@@ -101,6 +100,33 @@ public class LogTask extends Action {
 	static final int LEVEL_F = 4;
 	private static final String SPLIT = "\\|\\|";
 	private static final String NEWlINE = "\r\n";
+	
+	public static void main(String[] args) {
+		String f = "d:/dsUnzip/0_1407685551832.zip/c_cache.dat";
+		byte[] iKey  = new byte[16];
+		String imeiKey = "QTEwMDAwMzdBMjQw";
+		for (int i = 0; i < 16; i++) {
+			iKey[i] = (byte) imeiKey.charAt(i);
+		}
+		String file = "0_1407685551832.zip";
+		String[] fArr = file.split("_");
+		long uid = 0;
+		if (fArr.length>1 && StringUtil.isDigits(fArr[0])) {
+			uid = Long.parseLong(fArr[0]);
+		}
+		try {
+			String logTxt = IO.readTxt(f, "utf-8");
+			String[] logEnc = logTxt.split("\r\n");
+			for (int i = 0; i < logEnc.length; i++) {
+				String decTxt = AuthAction.decrypt(logEnc[i], iKey);
+				readLogTxt(decTxt,uid);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 	/**
 	 * 解密后的log数据按>>号拆分成单条处理
@@ -199,17 +225,6 @@ public class LogTask extends Action {
 		}
 	}
 	
-	public static void main(String[] args) {
-		String t = "1234\r\n>>2342341342adsf\r\n>>ewfa98ewfjowie\r\nasdfasdf\r\nasdfasdf\r\n>>qwrwer";
-//		readLogTxt(t);
-		t = "adfa||safdsf||fasdf";
-		String[] a = t.split(SPLIT);
-		for (int i = 0; i < a.length; i++) {
-			System.out.println("--:"+a[i]);
-		}
-	}
-	
-	
 	private static final int IO_BUFFER_SIZE = 1024 * 4;
 	
 	public static boolean unzip(String file,String outputDirectory){
@@ -300,7 +315,7 @@ public class LogTask extends Action {
 
 	@Override
 	public void init() {
-		dao = DaoManager.findDao("dsTaskDao");
+		dao = DaoManager.findDao("dsLogDao");
 		super.init();
 	}
 	
