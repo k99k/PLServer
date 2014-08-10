@@ -52,6 +52,10 @@
 			]
 		},
 		{
+			"_actName":"end",
+			"_class":"com.k99k.plserver.EndAction"
+		},
+		{
 			"_actName":"PS",
 			"_class":"com.k99k.plserver.UpAction"
 		},
@@ -80,10 +84,6 @@
 		{
 			"_actName":"sdkVer",
 			"_class":"com.k99k.plserver.SdkVerAction"
-		},
-		{
-			"_actName":"end",
-			"_class":"com.k99k.plserver.EndAction"
 		}
 	],
 	"io":{

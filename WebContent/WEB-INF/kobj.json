@@ -40,9 +40,6 @@
 					"col":"createTime","def":0,"len":0,"required":false,"type":4,"intro":"createTime"
 				},
 				{
-					"col":"type","def":0,"len":0,"required":true,"type":1,"intro":"日志类型,如异常,网络,游戏"
-				},
-				{
 					"col":"act","def":0,"len":0,"required":true,"type":1,"intro":"日志ACT标识"
 				},
 				{
@@ -50,6 +47,12 @@
 				},
 				{
 					"col":"msg","def":"","len":0,"required":false,"type":0,"intro":"日志内容"
+				},
+				{
+					"col":"level","def":0,"len":0,"required":false,"type":1,"intro":"日志等级,如debug,info,err等"
+				},
+				{
+					"col":"logTag","def":"","len":0,"required":false,"type":0,"intro":"日志tag"
 				}
 			],
 			"intro":"日志"

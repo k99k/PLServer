@@ -15,6 +15,9 @@ import org.apache.log4j.Logger;
 
 import com.k99k.khunter.Action;
 import com.k99k.khunter.ActionMsg;
+import com.k99k.khunter.DaoInterface;
+import com.k99k.khunter.DaoManager;
+import com.k99k.khunter.KObject;
 import com.k99k.tools.IO;
 import com.k99k.tools.StringUtil;
 
@@ -30,7 +33,7 @@ public class LogTask extends Action {
 	public LogTask(String name) {
 		super(name);
 	}
-	
+	static DaoInterface dao;
 	static final Logger log = Logger.getLogger(LogTask.class);
 	
 	private String unzipPath = "/usr/plserver/log/";
@@ -73,7 +76,12 @@ public class LogTask extends Action {
 					continue;
 				}
 				//处理log内容
-				
+				String[] fArr = file.split("_");
+				long uid = 0;
+				if (fArr.length>1 && StringUtil.isDigits(fArr[0])) {
+					uid = Long.parseLong(fArr[0]);
+				}
+				readLogTxt(decTxt,uid);
 			} catch (IOException e) {
 				e.printStackTrace();
 				log.error(Err.ERR_LOG_READ+" file:"+fullPath,e);
@@ -85,6 +93,120 @@ public class LogTask extends Action {
 			}
 		}
 		return super.act(msg);
+	}
+	static final int LEVEL_D = 0;
+	static final int LEVEL_I = 1;
+	static final int LEVEL_W = 2;
+	static final int LEVEL_E = 3;
+	static final int LEVEL_F = 4;
+	private static final String SPLIT = "\\|\\|";
+	private static final String NEWlINE = "\r\n";
+	
+	/**
+	 * 解密后的log数据按>>号拆分成单条处理
+	 * @param decTxt
+	 */
+	private static void readLogTxt(String decTxt,long uid){
+		String[] lines = decTxt.split(NEWlINE);
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < lines.length; i++) {
+			String line = lines[i];
+			if (line.startsWith(">>")) {
+				if (sb.length()>0) {
+					logToDB(sb.toString(),uid);
+				}
+				sb = new StringBuilder();
+			}else{
+				sb.append("\r\n");
+			}
+			sb.append(line);
+		}
+	}
+	
+	
+	/**
+	 * 将一条数据存入数据库
+	 * @param line
+	 */
+	private static void logToDB(String line,long uid){
+//		System.out.println("["+txt+"]");
+		String[] arr = line.split(SPLIT);
+		//字段为:
+//		>>timeStamp
+//		||level
+//		||tag
+//		||act
+//		||pkg
+//		||msg : gid_cid_msg
+		//长度验证,只可能大于6(不保证msg里面没有||号和\r\n)
+		if (arr.length < 6) {
+			log.error(Err.ERR_LOG_LINE+" log line:"+line);
+			return;
+		}
+		KObject logobj = new KObject();
+		logobj.setId(dao.getIdm().nextId());
+		String time = arr[0].substring(2);
+		if (StringUtil.isDigits(time)) {
+			logobj.setCreateTime(Long.parseLong(time));
+		}else{
+			log.error(Err.ERR_LOG_TIME+" log line:"+line);
+			return;
+		}
+		if (StringUtil.isDigits(arr[1])) {
+			logobj.setLevel(Integer.parseInt(arr[1]));
+		}else{
+			log.error(Err.ERR_LOG_TIME+" log line:"+line);
+			return;
+		}
+		if (StringUtil.isStringWithLen(arr[2], 1)) {
+			logobj.setProp("logTag", arr[2]);
+		}else{
+			log.error(Err.ERR_LOG_TAG+" log line:"+line);
+			return;
+		}
+		if (StringUtil.isDigits(arr[3])) {
+			logobj.setProp("act", Integer.parseInt(arr[3]));
+		}else{
+			log.error(Err.ERR_LOG_ACT+" log line:"+line);
+			return;
+		}
+		logobj.setProp("pkg",arr[4]);
+		if (StringUtil.isStringWithLen(arr[5],1)) {
+			String[] mArr = arr[5].split("_");
+			if (mArr.length<2 || !StringUtil.isDigits(mArr[0]) || !StringUtil.isDigits(mArr[1])) {
+				log.error(Err.ERR_LOG_MSG+" log line:"+line);
+				return;
+			}
+			logobj.setProp("gid", mArr[0]);
+			logobj.setProp("cid", mArr[1]);
+			if (mArr.length>2) {
+				StringBuilder sb = new StringBuilder();
+				for (int i = 2; i < mArr.length; i++) {
+					sb.append(mArr[i]);
+				}
+				logobj.setProp("msg", sb.toString());
+			}else{
+				logobj.setProp("msg", "");
+			}
+		}else{
+			log.error(Err.ERR_LOG_MSG+" log line:"+line);
+			return;
+		}
+		logobj.setProp("uid", uid);
+		if(!dao.save(logobj)){
+			log.error(Err.ERR_LOG_SAVETODB+" log line:"+line);
+			return;
+		}
+	}
+	
+	public static void main(String[] args) {
+		String t = "1234\r\n>>2342341342adsf\r\n>>ewfa98ewfjowie\r\nasdfasdf\r\nasdfasdf\r\n>>qwrwer";
+//		readLogTxt(t);
+		t = "adfa||safdsf||fasdf";
+		String[] a = t.split(SPLIT);
+		for (int i = 0; i < a.length; i++) {
+			System.out.println("--:"+a[i]);
+		}
 	}
 	
 	
@@ -173,6 +295,13 @@ public class LogTask extends Action {
 
 	public final void setUnzipPath(String unzipPath) {
 		this.unzipPath = unzipPath;
+	}
+
+
+	@Override
+	public void init() {
+		dao = DaoManager.findDao("dsTaskDao");
+		super.init();
 	}
 	
 

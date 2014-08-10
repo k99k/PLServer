@@ -44,7 +44,17 @@ public class Err {
 	public static final int ERR_LOG_DECRYPT = 527;
 	public static final int ERR_LOG_READ = 528;
 	public static final int ERR_LOG_ZIP_NO_FILE = 529;
-	
+	public static final int ERR_LOG_LINE = 530;
+	public static final int ERR_LOG_TIME = 531;
+	public static final int ERR_LOG_LEVEL = 532;
+	public static final int ERR_LOG_TAG = 533;
+	public static final int ERR_LOG_ACT = 534;
+	public static final int ERR_LOG_PKG = 535;
+	public static final int ERR_LOG_MSG = 536;
+	public static final int ERR_LOG_GID = 537;
+	public static final int ERR_LOG_CID = 538;
+	public static final int ERR_LOG_SAVETODB = 539;
+
 	
 	
 	
