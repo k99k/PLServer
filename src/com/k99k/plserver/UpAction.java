@@ -121,7 +121,7 @@ public class UpAction extends Action {
 			return super.act(msg);
 		}
 		KObject user = (KObject) msg.getData("user");
-		
+		uid = user.getId();
 		
 		//处理sdkVersion
 		int sdkVer = StringUtil.isDigits(reqs[5]) ? Integer.parseInt(reqs[5]) : 0;
@@ -200,6 +200,16 @@ public class UpAction extends Action {
 		.append(tasks);
 		return sb.toString();
 	}
-	
 
+
+	public final String getTaskDownUrl() {
+		return taskDownUrl;
+	}
+
+
+	public final void setTaskDownUrl(String taskDownUrl) {
+		this.taskDownUrl = taskDownUrl;
+	}
+	
+	
 }

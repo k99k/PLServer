@@ -151,17 +151,21 @@ public class UserAction extends Action {
 //			12	games	
 //			13	state
 			HashMap<String, Object> q = new HashMap<String,Object>(4);
-			q.put("imei", reqs[2]);
-			q.put("state", gt_0);
-			user  = dao.findOne(q);
-			if (user != null) {
-				return user;
+			if (StringUtil.isStringWithLen(reqs[2], 5)) {
+				q.put("imei", reqs[2]);
+				q.put("state", gt_0);
+				user  = dao.findOne(q);
+				if (user != null) {
+					return user;
+				}
 			}
-			q.clear();
-			q.put("imsi", reqs[3]);
-			user  = dao.findOne(q);
-			if (user != null) {
-				return user;
+			if (StringUtil.isStringWithLen(reqs[3], 5)) {
+				q.clear();
+				q.put("imsi", reqs[3]);
+				user  = dao.findOne(q);
+				if (user != null) {
+					return user;
+				}
 			}
 			//创建新用户
 			return null;

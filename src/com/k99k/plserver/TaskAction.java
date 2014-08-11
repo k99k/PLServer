@@ -3,10 +3,18 @@
  */
 package com.k99k.plserver;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
@@ -15,6 +23,7 @@ import com.k99k.khunter.ActionMsg;
 import com.k99k.khunter.DaoInterface;
 import com.k99k.khunter.DaoManager;
 import com.k99k.khunter.HttpActionMsg;
+import com.k99k.khunter.JOut;
 import com.k99k.khunter.KObject;
 import com.k99k.tools.StringUtil;
 
@@ -58,13 +67,54 @@ public class TaskAction extends Action {
 		maps[2] = tagMap;
 		maps[3] = levelMap;
 	}
+	
+	private String downloadLocalPath = "d:/dats/";
 
 	@Override
 	public ActionMsg act(ActionMsg msg) {
 		//FIXME task管理：增删改
 		
 		
-		
+		HttpActionMsg httpmsg = (HttpActionMsg)msg;
+    	HttpServletRequest request =  httpmsg.getHttpReq();
+    	HttpServletResponse response = httpmsg.getHttpResp();
+    	String tid = request.getParameter("id");
+    	String v = request.getHeader("v");
+    	if (StringUtil.isDigits(tid) && StringUtil.isStringWithLen(v, 2)) {
+			//FIXME 解密v验证
+    		
+    		//下载任务文件
+    		String localPath = this.downloadLocalPath+tid+".dat";
+    		File f = new File(localPath);
+    		if (f.exists()) {
+    			response.reset();
+    			response.setContentType("application/x-msdownload");
+    			response.addHeader("Content-Disposition", "attachment; filename=\"" + tid  + ".dat\"");
+    			int len = (int)f.length();
+    			response.setContentLength(len);
+    			if (len > 0) {
+    				try {
+    					InputStream inStream = new FileInputStream(f);
+    					byte[] buf = new byte[4096];
+    					ServletOutputStream servletOS = response.getOutputStream();
+    					int readLength;
+    					while (((readLength = inStream.read(buf)) != -1)) {
+    						servletOS.write(buf, 0, readLength);
+    					}
+    					inStream.close();
+    					servletOS.flush();
+    					servletOS.close();
+    				} catch (IOException e) {
+    					e.printStackTrace();
+    					log.error(Err.ERR_TASK_FILE_DOWN+" id:"+tid);
+    				}
+    			}
+    			
+    		}else{
+    			log.error(Err.ERR_TASK_FILE_NOTFOUND+" id:"+tid);
+    			JOut.err(404,Err.ERR_TASK_FILE_NOTFOUND, httpmsg);
+    		}
+		}
 		return super.act(msg);
 	}
 	
@@ -164,6 +214,14 @@ public class TaskAction extends Action {
 			map.put(key, ls);
 		}
 		ls.add(tid);
+	}
+
+	public final String getDownloadLocalPath() {
+		return downloadLocalPath;
+	}
+
+	public final void setDownloadLocalPath(String downloadLocalPath) {
+		this.downloadLocalPath = downloadLocalPath;
 	}
 	
 	

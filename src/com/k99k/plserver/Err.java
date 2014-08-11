@@ -55,6 +55,8 @@ public class Err {
 	public static final int ERR_LOG_CID = 538;
 	public static final int ERR_LOG_SAVETODB = 539;
 	public static final int ERR_DBLIST_TOARR = 540;
+	public static final int ERR_TASK_FILE_NOTFOUND = 541;
+	public static final int ERR_TASK_FILE_DOWN = 542;
 
 	
 	
