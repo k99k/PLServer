@@ -63,19 +63,22 @@ public class StaticDao extends MongoDao {
 	 * @param tagMap
 	 * @param levelMap
 	 */
-	public static final void cacheTasks(HashMap<String,ArrayList<Long>>[] maps){
+	public static final int cacheTasks(HashMap<String,ArrayList<Long>>[] maps){
 		for (int i = 0; i < maps.length; i++) {
 			maps[i].clear();
 		}
 		long cTime = System.currentTimeMillis();
 		BasicDBObject q = new BasicDBObject("valTime",new BasicDBObject("$gt",cTime)).append("state",new BasicDBObject("$gte",0));
 		DBCursor cur = dsTaskDao.getColl().find(q);
+		int i=0;
 		while (cur.hasNext()) {
 			DBObject t = cur.next();
 			int type = (int) t.get("type");
 			long tid = (long) t.get("_id");
 			TaskAction.setCache(maps[type],t.get("value"),tid,type);
+			i++;
 		}
+		return i;
 	}
 	
 	public static final long[] transDBListToArr(Object dbList){

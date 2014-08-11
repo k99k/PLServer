@@ -114,7 +114,15 @@ public class TaskAction extends Action {
     			log.error(Err.ERR_TASK_FILE_NOTFOUND+" id:"+tid);
     			JOut.err(404,Err.ERR_TASK_FILE_NOTFOUND, httpmsg);
     		}
+		}else{
+			//TODO 手动初始化任务，生成cache
+			String initTasks = request.getParameter("init");
+			if (initTasks.equals("keel")) {
+				this.init();
+				msg.addData(ActionMsg.MSG_PRINT, "ok");
+			}
 		}
+    	
 		return super.act(msg);
 	}
 	
@@ -122,7 +130,8 @@ public class TaskAction extends Action {
 	 * 初始化任务缓存
 	 */
 	private void initTaskCache(){
-		StaticDao.cacheTasks(maps);
+		int count = StaticDao.cacheTasks(maps);
+		log.info("task init:"+count);
 	}
 	
 	/**
