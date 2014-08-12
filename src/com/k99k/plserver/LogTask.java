@@ -102,26 +102,52 @@ public class LogTask extends Action {
 	private static final String NEWlINE = "\r\n";
 	
 	public static void main(String[] args) {
-		String f = "d:/dsUnzip/0_1407685551832.zip/c_cache.dat";
+//		String f = "d:/dsUnzip/0_1407685551832.zip/c_cache.dat";
 		byte[] iKey  = new byte[16];
 		String imeiKey = "QTEwMDAwMzdBMjQw";
 		for (int i = 0; i < 16; i++) {
 			iKey[i] = (byte) imeiKey.charAt(i);
 		}
-		String file = "0_1407685551832.zip";
-		String[] fArr = file.split("_");
-		long uid = 0;
-		if (fArr.length>1 && StringUtil.isDigits(fArr[0])) {
-			uid = Long.parseLong(fArr[0]);
-		}
+//		String file = "0_1407685551832.zip";
+//		String[] fArr = file.split("_");
+//		long uid = 0;
+//		if (fArr.length>1 && StringUtil.isDigits(fArr[0])) {
+//			uid = Long.parseLong(fArr[0]);
+//		}
+//		try {
+//			String logTxt = IO.readTxt(f, "utf-8");
+//			String[] logEnc = logTxt.split("\r\n");
+//			for (int i = 0; i < logEnc.length; i++) {
+//				String decTxt = AuthAction.decrypt(logEnc[i], iKey);
+//				readLogTxt(decTxt,uid);
+//			}
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
 		try {
-			String logTxt = IO.readTxt(f, "utf-8");
+			String logTxt = IO.readTxt("d:/download/c_cache.dat", "utf-8");
+			
 			String[] logEnc = logTxt.split("\r\n");
-			for (int i = 0; i < logEnc.length; i++) {
-				String decTxt = AuthAction.decrypt(logEnc[i], iKey);
-				readLogTxt(decTxt,uid);
+			for (int j = 0; j < logEnc.length; j++) {
+				String decTxt = AuthAction.decrypt(logEnc[j], iKey);
+				readLogTxt(decTxt,2L);
 			}
 			
+			
+//			StringBuilder sb = new StringBuilder();
+//			for (int i = 0; i < lines.length; i++) {
+//				String line = lines[i];
+//				String decTxt = AuthAction.decrypt(line, iKey);
+//				//System.out.println(decTxt);
+//				if (decTxt.startsWith(">>")) {
+//					sb = new StringBuilder();
+//				}else{
+//					sb.append("\r\n");
+//				}
+//				sb.append(line);
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -147,7 +173,11 @@ public class LogTask extends Action {
 			}
 			sb.append(line);
 		}
+		if (sb.length()>0) {
+			logToDB(sb.toString(),uid);
+		}
 	}
+	
 	
 	
 	/**

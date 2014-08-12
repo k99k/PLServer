@@ -117,7 +117,7 @@ public class TaskAction extends Action {
 		}else{
 			//TODO 手动初始化任务，生成cache
 			String initTasks = request.getParameter("init");
-			if (initTasks.equals("keel")) {
+			if (initTasks != null && initTasks.equals("keel")) {
 				this.init();
 				msg.addData(ActionMsg.MSG_PRINT, "ok");
 			}
