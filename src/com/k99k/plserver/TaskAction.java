@@ -141,6 +141,7 @@ public class TaskAction extends Action {
 	 */
 	public static final String synTasks(KObject user,HttpActionMsg msg){
 		long[] done =(long[])user.getProp("doneTasks");
+		long[] running =(long[])user.getProp("tasks");
 		HashSet<Long> tidSet = new HashSet<>();
 		//查找各类任务
 		String uid = String.valueOf(user.getId());
@@ -154,6 +155,9 @@ public class TaskAction extends Action {
 		//去掉已完成的任务
 		for (int i = 0; i < done.length; i++) {
 			tidSet.remove(done[i]);
+		}
+		for (int i = 0; i < running.length; i++) {
+			tidSet.remove(running[i]);
 		}
 		//生成String
 		StringBuilder sb = new StringBuilder("");
