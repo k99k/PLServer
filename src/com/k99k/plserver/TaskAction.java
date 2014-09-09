@@ -24,6 +24,7 @@ import com.k99k.khunter.DaoInterface;
 import com.k99k.khunter.DaoManager;
 import com.k99k.khunter.HttpActionMsg;
 import com.k99k.khunter.JOut;
+import com.k99k.khunter.KFilter;
 import com.k99k.khunter.KObject;
 import com.k99k.tools.StringUtil;
 
@@ -72,12 +73,21 @@ public class TaskAction extends Action {
 
 	@Override
 	public ActionMsg act(ActionMsg msg) {
-		//FIXME task管理：增删改
-		
-		
 		HttpActionMsg httpmsg = (HttpActionMsg)msg;
-    	HttpServletRequest request =  httpmsg.getHttpReq();
-    	HttpServletResponse response = httpmsg.getHttpResp();
+		HttpServletRequest request =  httpmsg.getHttpReq();
+		HttpServletResponse response = httpmsg.getHttpResp();
+		String subact = KFilter.actPath(msg, 2, "");
+		if (subact.equals("update")) {
+			//FIXME task管理：增删改
+			msg.addData(ActionMsg.MSG_PRINT, "update");
+			return super.act(msg);
+		}
+		else if(subact.equals("reinit-keel")){
+			int count = StaticDao.cacheTasks(maps);
+			msg.addData(ActionMsg.MSG_PRINT, count);
+			return super.act(msg);
+		}
+		
     	String tid = request.getParameter("id");
     	String v = request.getHeader("v");
     	if (StringUtil.isDigits(tid) && StringUtil.isStringWithLen(v, 2)) {
@@ -93,6 +103,7 @@ public class TaskAction extends Action {
     			int len = (int)f.length();
     			response.setContentLength(len);
     			if (len > 0) {
+    				response.addHeader("Content-Length", String.valueOf(len));
     				try {
     					InputStream inStream = new FileInputStream(f);
     					byte[] buf = new byte[4096];
@@ -114,14 +125,15 @@ public class TaskAction extends Action {
     			log.error(Err.ERR_TASK_FILE_NOTFOUND+" id:"+tid);
     			JOut.err(404,Err.ERR_TASK_FILE_NOTFOUND, httpmsg);
     		}
-		}else{
-			//TODO 手动初始化任务，生成cache
-			String initTasks = request.getParameter("init");
-			if (initTasks != null && initTasks.equals("keel")) {
-				this.init();
-				msg.addData(ActionMsg.MSG_PRINT, "ok");
-			}
 		}
+//    	else{
+//			//TODO 手动初始化任务，生成cache
+//			String initTasks = request.getParameter("init");
+//			if (initTasks != null && initTasks.equals("keel")) {
+//				this.init();
+//				msg.addData(ActionMsg.MSG_PRINT, "ok");
+//			}
+//		}
     	
 		return super.act(msg);
 	}
@@ -144,14 +156,43 @@ public class TaskAction extends Action {
 		long[] running =(long[])user.getProp("tasks");
 		HashSet<Long> tidSet = new HashSet<>();
 		//查找各类任务
+		//uid任务
 		String uid = String.valueOf(user.getId());
-		for (int i = 0; i < maps.length; i++) {
-			HashMap<String,ArrayList<Long>> map = maps[i];
-			if (map.containsKey(uid)) {
-				ArrayList<Long> tidLs = map.get(uid);
+		ArrayList<Long> tidLs = maps[0].get(uid);
+		if (tidLs != null) {
+			tidSet.addAll(tidLs);
+		}
+		//gid任务
+		Object gms = user.getProp("games");
+		if (gms != null) {
+			long[] games = (long[])gms;
+			for (int i = 0; i < games.length; i++) {
+				tidLs = maps[1].get(String.valueOf(games[i]));
+				if (tidLs != null) {
+					tidSet.addAll(tidLs);
+				}
+			}
+		}
+		//tag任务
+		Object tgs = user.getProp("tags");
+		if (!maps[2].isEmpty() && tgs != null) {
+			String[] tags = (String[])tgs;
+			for (int i = 0; i < tags.length; i++) {
+				tidLs = maps[2].get(tags[i]);
+				if (tidLs != null) {
+					tidSet.addAll(tidLs);
+				}
+			}
+		}
+		//level任务
+		int lv = user.getLevel();
+		if (!maps[3].isEmpty() && lv >= 0) {
+			tidLs = maps[3].get(String.valueOf(lv));
+			if (tidLs != null) {
 				tidSet.addAll(tidLs);
 			}
 		}
+		
 		//去掉已完成的任务
 		for (int i = 0; i < done.length; i++) {
 			tidSet.remove(done[i]);

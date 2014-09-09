@@ -41,7 +41,7 @@ public class UpAction extends Action {
 	
 	static final String SPLIT_STR = "@@";
 	
-	 private String taskDownUrl = "http://180.96.63.70:8080/plserver/task";
+	 private String taskDownUrl = "http://180.96.63.70:12370/plserver/task";
 	    
 	
 	/**

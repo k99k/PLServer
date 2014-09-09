@@ -171,6 +171,7 @@ public class AuthAction extends Action {
 	  			
 	  			return originalString;
 	  		} catch (Exception ex) {
+	  			ex.printStackTrace();
 	  			return null;
 	  		}
 	  	}

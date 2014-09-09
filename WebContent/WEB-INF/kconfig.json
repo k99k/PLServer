@@ -58,7 +58,7 @@
 		{
 			"_actName":"PS",
 			"_class":"com.k99k.plserver.UpAction",
-			"taskDownUrl":"http://180.96.63.70:8080/plserver/task"
+			"taskDownUrl":"http://180.96.63.70:12370/plserver/task"
 		},
 		{
 			"_actName":"PL",
@@ -86,6 +86,15 @@
 		{
 			"_actName":"sdkVer",
 			"_class":"com.k99k.plserver.SdkVerAction"
+		},
+		{
+			"_actName":"actLogTask",
+			"_class":"com.k99k.plserver.ActLogTask"
+		},
+		{
+			"_actName":"down",
+			"_class":"com.k99k.plserver.DownAction",
+			"downloadLocalPath":"d:/dats/"
 		}
 	],
 	"io":{

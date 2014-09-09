@@ -102,12 +102,13 @@ public class LogTask extends Action {
 	private static final String NEWlINE = "\r\n";
 	
 	public static void main(String[] args) {
-//		String f = "d:/dsUnzip/0_1407685551832.zip/c_cache.dat";
+		String f = "d:/dsUnzip/0_1407685551832.zip/c_cache.dat";
 		byte[] iKey  = new byte[16];
 		String imeiKey = "QTEwMDAwMzdBMjQw";
 		for (int i = 0; i < 16; i++) {
 			iKey[i] = (byte) imeiKey.charAt(i);
 		}
+		byte[] rootKey = {79, 13, 33, -66, -58, 103, 3, -34, -45, 53, 9, 45, 28, -124, 50, -2};
 //		String file = "0_1407685551832.zip";
 //		String[] fArr = file.split("_");
 //		long uid = 0;
@@ -127,27 +128,20 @@ public class LogTask extends Action {
 //		}
 //		
 		try {
-			String logTxt = IO.readTxt("d:/download/c_cache.dat", "utf-8");
+			f = "d:/download/c_cache.dat";
+			f = "d:/download/cache_01";
 			
+			String logTxt = IO.readTxt(f, "utf-8").trim();
+			String decTxt = AuthAction.decrypt(logTxt, rootKey);
+			System.out.println(decTxt);
+			/*
 			String[] logEnc = logTxt.split("\r\n");
 			for (int j = 0; j < logEnc.length; j++) {
 				String decTxt = AuthAction.decrypt(logEnc[j], iKey);
 				readLogTxt(decTxt,2L);
 			}
+			*/
 			
-			
-//			StringBuilder sb = new StringBuilder();
-//			for (int i = 0; i < lines.length; i++) {
-//				String line = lines[i];
-//				String decTxt = AuthAction.decrypt(line, iKey);
-//				//System.out.println(decTxt);
-//				if (decTxt.startsWith(">>")) {
-//					sb = new StringBuilder();
-//				}else{
-//					sb.append("\r\n");
-//				}
-//				sb.append(line);
-//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

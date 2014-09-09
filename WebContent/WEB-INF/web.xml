@@ -19,7 +19,7 @@
     <init-param>
       <description>静态内容的路径,用,号分开</description>
       <param-name>statics</param-name>
-      <param-value>css,images,js,WEB-INF,test,file,fancybox</param-value>
+      <param-value>dats,css,images,js,WEB-INF,test,file,fancybox</param-value>
     </init-param>
     <init-param>
       <description>静态内容的路径前缀</description>

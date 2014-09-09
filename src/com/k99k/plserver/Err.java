@@ -57,7 +57,11 @@ public class Err {
 	public static final int ERR_DBLIST_TOARR = 540;
 	public static final int ERR_TASK_FILE_NOTFOUND = 541;
 	public static final int ERR_TASK_FILE_DOWN = 542;
-
+	public static final int ERR_FILE_DOWN = 543;
+	public static final int ERR_FILE_NOTFOUND = 544;
+	public static final int ERR_ACTLOG_PARA = 545;
+	public static final int ERR_ACTLOG_SAVETODB = 546;
+	
 	
 	
 }

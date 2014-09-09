@@ -191,6 +191,12 @@
 				},
 				{
 					"col":"screenDpi","def":0,"len":0,"required":false,"type":1,"intro":"屏幕Dpi"
+				},
+				{
+					"col":"tags","def":[],"len":0,"required":false,"type":3,"intro":"tags"
+				},
+				{
+					"col":"tags.*","def":"","len":0,"required":false,"type":0,"intro":"tags"
 				}
 			],
 			"intro":"用户表"
@@ -220,7 +226,7 @@
 			],
 			"columns":[
 				{
-					"col":"type","def":0,"len":0,"required":false,"type":1,"intro":"维度:0为uid,1为gid,2为tag,3为level"
+					"col":"type","def":0,"len":0,"required":true,"type":1,"intro":"维度:0为uid,1为gid,2为tag,3为level"
 				},
 				{
 					"col":"valTime","def":0,"len":0,"required":true,"type":4,"intro":"有效时间,在此时间之前有效"
@@ -238,13 +244,52 @@
 					"col":"state","def":0,"len":0,"required":false,"type":1,"intro":"状态码,-1表示删除"
 				},
 				{
-					"col":"value","def":"","len":0,"required":false,"type":0,"intro":"对应type的值,如uid,tag等"
+					"col":"value","def":"","len":0,"required":true,"type":0,"intro":"对应type的值,如uid,tag等"
 				},
 				{
 					"col":"subType","def":0,"len":0,"required":false,"type":1,"intro":"二级类型,gid下面0为more,1为exit"
 				}
 			],
 			"intro":"任务"
+		},
+		"dsActLog":{
+			"dao":{
+				"tableName":"dsActLog",
+				"newDaoName":"dsActLogDao",
+				"daoName":"mongoDao",
+				"props":{
+					"id":5,"type":"single"
+				}
+			},
+			"indexes":[
+				{
+					"col":"uid","unique":false,"asc":false,"type":"type","intro":"intro"
+				},
+				{
+					"col":"createTime","unique":false,"asc":false,"type":"type","intro":"intro"
+				},
+				{
+					"col":"tid","unique":false,"asc":false,"type":"type","intro":"intro"
+				},
+				{
+					"col":"type","unique":false,"asc":false,"type":"type","intro":"intro"
+				}
+			],
+			"columns":[
+				{
+					"col":"uid","def":0,"len":0,"required":true,"type":4,"intro":"uid"
+				},
+				{
+					"col":"tid","def":0,"len":0,"required":true,"type":4,"intro":"任务id"
+				},
+				{
+					"col":"type","def":0,"len":0,"required":true,"type":1,"intro":"类型,0为任务到达并执行,1为下载完成,2为激活..."
+				},
+				{
+					"col":"msg","def":"","len":0,"required":false,"type":0,"intro":"log描述"
+				}
+			],
+			"intro":"ActLog"
 		}
 	}
 }
