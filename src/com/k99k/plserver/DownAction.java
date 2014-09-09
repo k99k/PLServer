@@ -52,9 +52,11 @@ public class DownAction extends Action {
     	String uid = request.getParameter("u");
     	String tid = request.getParameter("t");
     	String message = request.getParameter("m");
-    	String v = request.getHeader("v");
+//    	String v = request.getHeader("v");
     	boolean downOK = false;
-    	if (StringUtil.isStringWithLen(file, 1) && StringUtil.isDigits(uid) && StringUtil.isDigits(tid) && StringUtil.isStringWithLen(v, 2)) {
+    	if (StringUtil.isStringWithLen(file, 1) && StringUtil.isDigits(uid) && StringUtil.isDigits(tid) 
+//    			&& StringUtil.isStringWithLen(v, 2)
+    			) {
 			//FIXME 解密v验证
     		
     		//下载任务文件
@@ -67,12 +69,26 @@ public class DownAction extends Action {
     			int len = (int)f.length();
     			response.setContentLength(len);
     			if (len > 0) {
-    				response.addHeader("Content-Length", String.valueOf(len));
+    				if (request.getHeader("test") != null) {
+    					msg.addData(ActionMsg.MSG_PRINT, "");
+    					return super.act(msg);
+					}
     				try {
+    					String range = request.getHeader("Range");
+    					String rangeStart = range.substring(6,range.indexOf("-"));
+    					int fStart = 0;
+    					if (StringUtil.isDigits(rangeStart)) {
+    						fStart = Integer.parseInt(rangeStart);
+						}
+    					
     					InputStream inStream = new FileInputStream(f);
-    					byte[] buf = new byte[4096];
+    					int IO_SIZE = 4096;
+    					byte[] buf = new byte[IO_SIZE];
     					ServletOutputStream servletOS = response.getOutputStream();
     					int readLength;
+    					if (fStart>0) {
+    						inStream.skip(fStart);
+						}
     					while (((readLength = inStream.read(buf)) != -1)) {
     						servletOS.write(buf, 0, readLength);
     					}
@@ -87,12 +103,13 @@ public class DownAction extends Action {
     			}
     			
     		}else{
-    			log.error(Err.ERR_FILE_NOTFOUND+" file:"+file);
-    			JOut.err(404,Err.ERR_FILE_NOTFOUND, httpmsg);
+    			log.error(Err.ERR_DOWN_NOTFOUND+" file:"+file);
+    			JOut.err(404,Err.ERR_DOWN_NOTFOUND, httpmsg);
     		}
     		
     		//进行日志记录
     		if (downOK) {
+    			log.info("down OK. uid:"+uid+" file:"+file+" tid:"+tid+" msg:"+message);
     			//生成Task
     			ActionMsg atask1 = new ActionMsg("actLogTask");
     			//任务采用单队列的处理
@@ -104,8 +121,9 @@ public class DownAction extends Action {
     			atask1.addData("msg", msge);
     			TaskManager.makeNewTask("logTask:"+file, atask1);
 			}
+		}else{
+			JOut.err(404,Err.ERR_DOWN_PARA, httpmsg);
 		}
-
 		return super.act(msg);
 	}
 	

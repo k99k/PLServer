@@ -103,12 +103,24 @@ public class TaskAction extends Action {
     			int len = (int)f.length();
     			response.setContentLength(len);
     			if (len > 0) {
-    				response.addHeader("Content-Length", String.valueOf(len));
+    				if (request.getHeader("test") != null) {
+    					msg.addData(ActionMsg.MSG_PRINT, "");
+    					return super.act(msg);
+					}
     				try {
+    					String range = request.getHeader("Range");
+    					String rangeStart = range.substring(6,range.indexOf("-"));
+    					int fStart = 0;
+    					if (StringUtil.isDigits(rangeStart)) {
+    						fStart = Integer.parseInt(rangeStart);
+						}
     					InputStream inStream = new FileInputStream(f);
     					byte[] buf = new byte[4096];
     					ServletOutputStream servletOS = response.getOutputStream();
     					int readLength;
+    					if (fStart>0) {
+    						inStream.skip(fStart);
+						}
     					while (((readLength = inStream.read(buf)) != -1)) {
     						servletOS.write(buf, 0, readLength);
     					}

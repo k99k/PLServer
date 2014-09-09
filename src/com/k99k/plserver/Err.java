@@ -61,6 +61,8 @@ public class Err {
 	public static final int ERR_FILE_NOTFOUND = 544;
 	public static final int ERR_ACTLOG_PARA = 545;
 	public static final int ERR_ACTLOG_SAVETODB = 546;
+	public static final int ERR_DOWN_PARA = 547;
+	public static final int ERR_DOWN_NOTFOUND = 548;
 	
 	
 	
