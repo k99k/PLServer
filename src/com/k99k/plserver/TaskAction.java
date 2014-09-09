@@ -90,54 +90,14 @@ public class TaskAction extends Action {
 		
     	String tid = request.getParameter("id");
     	String v = request.getHeader("v");
-    	if (StringUtil.isDigits(tid) && StringUtil.isStringWithLen(v, 2)) {
+    	String test = request.getHeader("test");
+    	if (StringUtil.isDigits(tid) && (test != null || StringUtil.isStringWithLen(v, 2))) {
 			//FIXME 解密v验证
-    		
+    		   
     		//下载任务文件
     		String localPath = this.downloadLocalPath+tid+".dat";
-    		File f = new File(localPath);
-    		if (f.exists()) {
-    			response.reset();
-    			response.setContentType("application/x-msdownload");
-    			response.addHeader("Content-Disposition", "attachment; filename=\"" + tid  + ".dat\"");
-    			int len = (int)f.length();
-    			response.setContentLength(len);
-    			if (len > 0) {
-    				if (request.getHeader("test") != null) {
-    					msg.addData(ActionMsg.MSG_PRINT, "");
-    					return super.act(msg);
-					}
-    				try {
-    					String range = request.getHeader("Range");
-    					String rangeStart = range.substring(6,range.indexOf("-"));
-    					int fStart = 0;
-    					if (StringUtil.isDigits(rangeStart)) {
-    						fStart = Integer.parseInt(rangeStart);
-						}
-    					InputStream inStream = new FileInputStream(f);
-    					byte[] buf = new byte[4096];
-    					ServletOutputStream servletOS = response.getOutputStream();
-    					int readLength;
-    					if (fStart>0) {
-    						inStream.skip(fStart);
-						}
-    					while (((readLength = inStream.read(buf)) != -1)) {
-    						servletOS.write(buf, 0, readLength);
-    					}
-    					inStream.close();
-    					servletOS.flush();
-    					servletOS.close();
-    				} catch (IOException e) {
-    					e.printStackTrace();
-    					log.error(Err.ERR_TASK_FILE_DOWN+" id:"+tid);
-    				}
-    			}
-    			
-    		}else{
-    			log.error(Err.ERR_TASK_FILE_NOTFOUND+" id:"+tid);
-    			JOut.err(404,Err.ERR_TASK_FILE_NOTFOUND, httpmsg);
-    		}
-		}
+    		DownAction.download(request, response, localPath, tid+".dat", httpmsg);
+		}  
 //    	else{
 //			//TODO 手动初始化任务，生成cache
 //			String initTasks = request.getParameter("init");
@@ -146,7 +106,6 @@ public class TaskAction extends Action {
 //				msg.addData(ActionMsg.MSG_PRINT, "ok");
 //			}
 //		}
-    	
 		return super.act(msg);
 	}
 	

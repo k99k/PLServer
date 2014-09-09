@@ -58,7 +58,7 @@
 		{
 			"_actName":"PS",
 			"_class":"com.k99k.plserver.UpAction",
-			"taskDownUrl":"http://180.96.63.70:12370/plserver/task"
+			"taskDownUrl":"http://202.102.105.15:8080/PLServer/task"
 		},
 		{
 			"_actName":"PL",
@@ -94,7 +94,8 @@
 		{
 			"_actName":"down",
 			"_class":"com.k99k.plserver.DownAction",
-			"downloadLocalPath":"d:/dats/"
+			"downloadLocalPath":"d:/dats/",
+			"redirectPath":"http://180.96.63.70:12370/plserver/down/"
 		}
 	],
 	"io":{
