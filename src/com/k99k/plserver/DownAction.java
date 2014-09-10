@@ -4,7 +4,6 @@
 package com.k99k.plserver;
 
 import java.io.File;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,7 +82,7 @@ public class DownAction extends Action {
     			atask1.addData("type", ActLogTask.TYPE_DOWNLOAD_FILE);
     			String msge = StringUtil.isStringWithLen(message, 1) ? "down@@"+file+"@@"+message: "down@@"+file;
     			atask1.addData("msg", msge);
-    			TaskManager.makeNewTask("logTask:"+file, atask1);
+    			TaskManager.makeNewTask("logTask:"+file+":"+System.currentTimeMillis(), atask1);
 			}
 		}else{
 			JOut.err(404,Err.ERR_DOWN_PARA, httpmsg);
@@ -103,7 +102,6 @@ public class DownAction extends Action {
 		boolean downOK = false;
 //		String localPath = localDir+file;
 		File f = new File(localFileFullPath);
-		log.info("download:"+localFileFullPath);
 		if (f.exists()) {
 			response.reset();
 			response.setContentType("application/x-msdownload");

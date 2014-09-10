@@ -3,16 +3,11 @@
  */
 package com.k99k.plserver;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,9 +18,9 @@ import com.k99k.khunter.ActionMsg;
 import com.k99k.khunter.DaoInterface;
 import com.k99k.khunter.DaoManager;
 import com.k99k.khunter.HttpActionMsg;
-import com.k99k.khunter.JOut;
 import com.k99k.khunter.KFilter;
 import com.k99k.khunter.KObject;
+import com.k99k.khunter.TaskManager;
 import com.k99k.tools.StringUtil;
 
 /**
@@ -86,6 +81,9 @@ public class TaskAction extends Action {
 			int count = StaticDao.cacheTasks(maps);
 			msg.addData(ActionMsg.MSG_PRINT, count);
 			return super.act(msg);
+		}else if(subact.equals("noti")){
+			this.taskNotify(httpmsg, request);
+			return super.act(msg);
 		}
 		
     	String tid = request.getParameter("id");
@@ -107,6 +105,28 @@ public class TaskAction extends Action {
 //			}
 //		}
 		return super.act(msg);
+	}
+	
+	private void taskNotify(ActionMsg msg,HttpServletRequest request){
+		String tidstr = request.getParameter("t");
+		String uidstr = request.getParameter("u");
+		String msgstr = request.getParameter("m");
+		String typestr = request.getParameter("y");
+		if (!StringUtil.isDigits(tidstr) || !StringUtil.isDigits(uidstr)) {
+			return;
+		}
+		//生成Task
+		ActionMsg atask1 = new ActionMsg("actLogTask");
+		//任务采用单队列的处理
+		int type = (StringUtil.isDigits(typestr)) ? Integer.parseInt(typestr) :ActLogTask.TYPE_TASK_DONE;
+		atask1.addData(TaskManager.TASK_TYPE, TaskManager.TASK_TYPE_EXE_SINGLE);
+		atask1.addData("tid", tidstr);
+		atask1.addData("uid", uidstr);
+		atask1.addData("type", type);
+		String msge = "tk@@"+type+"@@"+tidstr+"@@"+msgstr;
+		atask1.addData("msg", msge);
+		TaskManager.makeNewTask("logTask:"+tidstr+":"+System.currentTimeMillis(), atask1);
+		msg.addData(ActionMsg.MSG_PRINT, tidstr);
 	}
 	
 	/**
