@@ -16,7 +16,7 @@ import com.k99k.khunter.Action;
 import com.k99k.khunter.ActionMsg;
 import com.k99k.khunter.HttpActionMsg;
 import com.k99k.tools.StringUtil;
-import com.k99k.tools.encrypter.Base64Coder;
+import com.k99k.tools.enc.Base64Coder;
 
 /**
  * 验证http请求的v，并生成imeiKey

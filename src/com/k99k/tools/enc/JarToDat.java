@@ -1,4 +1,4 @@
-package com.k99k.tools.encrypter;
+package com.k99k.tools.enc;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;

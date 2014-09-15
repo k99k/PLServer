@@ -1,4 +1,4 @@
-package com.k99k.tools.encrypter;
+package com.k99k.tools.enc;
 
 /**
  * @author keel

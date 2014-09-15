@@ -1,22 +1,18 @@
 package com.k99k.plserver;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.k99k.tools.StringUtil;
-import com.k99k.tools.encrypter.Base64Coder;
+import com.k99k.tools.enc.Base64Coder;
 
 /**s
  * Servlet implementation class PS
@@ -142,52 +138,34 @@ public class PS extends HttpServlet {
     
     private static final String SPLIT_STR = "@@";
     //TODO 暂时写死
-    private String taskDownUrl = "http://180.96.63.70:8080/plserver/PS";
-    private String updateDownUrl = "http://180.96.63.70:8080/plserver/PS";
-    private final static String downloadType = "application/x-msdownload";
+    private String taskDownUrl = "http://180.96.63.70:12370/plserver/task";
+    private String updateDownUrl = "http://180.96.63.70:12370/plserver/PS";
+//    private final static String downloadType = "application/x-msdownload";
 
-    private String downloadLocalPath = "/usr/plserver/dats/";
+//    private String downloadLocalPath = "/usr/plserver/dats/";
     
     private int currentKeyVersion = 1;
     
-    private String tempTaskList = "1";
+//    private String tempTaskList = "1";
     
     
-    public static void main(String[] args) {
-		String str = "16@@A1000037A240A4@@460036120035188@@HTC 609d@@1@@1404116736787@@1404116974258@@";
-		str = "Y4@hj1OSdHBK.SP8SN3KREa.ywiB2pg6Rh2TA0loe6iZEE246bT60cOAJ76nPAmC";
-		str = "A1000037A240A4||1404120179.18484||cn.play.dserv";
-		str = "o.62qBVtbdWfDYbR2mrD1PiIV3W23dwWdE7Rpr6bZDhvX4qStNZIkWJ2LDi5PN0WYXCB1LOzU82JUQGWkThmTaSkyiNOCHdkPO0u1NjkAhQibG@CyD8bBNtfZ8zx1LVW";
-		str = "16@@A1000037A240A4@@460036120035188@@HTC 609d@@1@@1404183662860@@1404183662863@@";
-		try {
-			//byte[] nkey = {81,84,69,119,77,68,65,119,77,122,100,66,77,106,81,119};
-			byte[] nkey = "QTEwMDAwMzdBMjQw".getBytes("utf-8");
-			String enc = PS.encrypt(str,nkey);
-			System.out.println("enc:"+enc);
-			System.out.println("dec:"+decrypt(enc,nkey));
-//			System.out.println("base:"+Base64Coder.encodeString("+++"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}   
-
-	}
     
     
 	@Override
 	public void init() throws ServletException {
 		
-		String str = "16@@A1000037A240A4@@460036120035188@@HTC 609d@@1@@1404116736787@@1404116974258@@";
-		str = "Y4@hj1OSdHBK.SP8SN3KREa.ywiB2pg6Rh2TA0loe6iZEE246bT60cOAJ76nPAmC";
-		str = "A1000037A240A4||1404120179.18484||cn.play.dserv";
-		try {
-			byte[] nkey = {81,84,69,119,77,68,65,119,77,122,100,66,77,106,81,119};
-			String enc = encrypt(str,rootkey);
-			System.out.println("enc:"+enc);
-			System.out.println("dec:"+decrypt(enc,rootkey));
-//			System.out.println("base:"+Base64Coder.encodeString("+++"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}   
+//		String str = "16@@A1000037A240A4@@460036120035188@@HTC 609d@@1@@1404116736787@@1404116974258@@";
+//		str = "Y4@hj1OSdHBK.SP8SN3KREa.ywiB2pg6Rh2TA0loe6iZEE246bT60cOAJ76nPAmC";
+//		str = "A1000037A240A4||1404120179.18484||cn.play.dserv";
+//		try {
+//			byte[] nkey = {81,84,69,119,77,68,65,119,77,122,100,66,77,106,81,119};
+//			String enc = encrypt(str,rootkey);
+//			System.out.println("enc:"+enc);
+//			System.out.println("dec:"+decrypt(enc,rootkey));
+////			System.out.println("base:"+Base64Coder.encodeString("+++"));
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}   
 		
 		super.init();
 	}
@@ -197,6 +175,9 @@ public class PS extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		setCharset("utf-8",request,response	);
+		
+		this.doPost(request, response);
+		/*
 		String tid = request.getParameter("id");
 		String kVer = request.getHeader("v");
 		
@@ -259,7 +240,7 @@ public class PS extends HttpServlet {
 			response.getWriter().println(ERR_PARA);
 			return;
 		}
-		
+		*/
 	}
 
 	/**
@@ -269,36 +250,28 @@ public class PS extends HttpServlet {
 		setCharset("utf-8",request,response	);
 		String enc = request.getParameter("up");
 		String kVer = request.getHeader("v");
-		if (!StringUtil.isStringWithLen(enc, 6) || !StringUtil.isStringWithLen(kVer,5)) {
+//		System.out.println("v:"+kVer);
+		if (!StringUtil.isStringWithLen(enc, 6)) {
 			response.getWriter().println(ERR_PARA);
 			return;
 		}
 		//int keyVersion = (Integer.parseInt(kVer)-17)/27;
 		String req = null;
+		String imeiKey = null;
 		try {
 			String rkey = decrypt(kVer,rootkey);
-			System.out.println("rkey:"+rkey);
+//			System.out.println("kVer:"+kVer+" rkey:"+rkey);
 			String[] rkeys = rkey.split("\\|\\|");
 			//TODO 注意这里解密先需要确定KEY
-			String imeiKey = Base64Coder.encodeString(rkeys[0]).substring(0, 16);
-			System.out.println(imeiKey);
+			imeiKey = Base64Coder.encodeString(rkeys[0]).substring(0, 16);
 			byte[] ikey  = new byte[16];
-//			StringBuilder sb1 = new StringBuilder();
 			for (int i = 0; i < 16; i++) {
 				ikey[i] = (byte) imeiKey.charAt(i);
-//				sb1.append(ikey[i]).append(",");
 			}
-//			System.out.println("ikey:"+sb1.toString());
-			System.out.println("upContent:"+enc);
 			req = decrypt(enc,ikey);
-			System.out.println("dec:"+req);
+//			System.out.println("dec:"+req);
 			String[] reqs = req.split("@@");
-			System.out.println(reqs.length + " "+ reqs[6]);
-//			if (keyVersion != this.currentKeyVersion) {
-//				response.getWriter().println(ERR_KEY_EXPIRED);
-//				return;
-//			}
-			//req = Encrypter.getInstance().decrypt(enc);
+			System.out.println("imeiKey:"+imeiKey+" dec:"+req);
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.getWriter().println(ERR_DECRYPT);
@@ -314,11 +287,17 @@ public class PS extends HttpServlet {
 		sb.append(ORDER_SYNC_TASK).append(SPLIT_STR)
 		.append(this.taskDownUrl).append(SPLIT_STR)
 		//这里仅使用两个测试任务ID,1为toast,2为下载view数据
-		.append(this.tempTaskList).append(SPLIT_STR)
+		.append("7").append(SPLIT_STR)
 		.append(this.currentKeyVersion);
 		String resp = null;
 		try {
-			resp = encrypt(sb.toString(),rkey);
+//			System.out.println("re:"+sb.toString());
+			byte[] ikey  = new byte[16];
+			for (int i = 0; i < 16; i++) {
+				ikey[i] = (byte) imeiKey.charAt(i);
+			}
+			resp = encrypt(sb.toString(),ikey);
+//			System.out.println("resp:"+resp);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -337,50 +316,6 @@ public class PS extends HttpServlet {
 		resp.setHeader("Content-Encoding",charset);
 		resp.setHeader("content-type","text/html; charset="+charset);
 	}
-
-	/**
-	 * @return the currentKeyVersion
-	 */
-	public final int getCurrentKeyVersion() {
-		return currentKeyVersion;
-	}
-
-	/**
-	 * @param currentKeyVersion the currentKeyVersion to set
-	 */
-	public final void setCurrentKeyVersion(int currentKeyVersion) {
-		this.currentKeyVersion = currentKeyVersion;
-	}
-
-	/**
-	 * @return the taskDownUrl
-	 */
-	public final String getTaskDownUrl() {
-		return taskDownUrl;
-	}
-
-	/**
-	 * @param taskDownUrl the taskDownUrl to set
-	 */
-	public final void setTaskDownUrl(String taskDownUrl) {
-		this.taskDownUrl = taskDownUrl;
-	}
-
-	/**
-	 * @return the updateDownUrl
-	 */
-	public final String getUpdateDownUrl() {
-		return updateDownUrl;
-	}
-
-	/**
-	 * @param updateDownUrl the updateDownUrl to set
-	 */
-	public final void setUpdateDownUrl(String updateDownUrl) {
-		this.updateDownUrl = updateDownUrl;
-	}
-	
-	
 	
 	
 }
