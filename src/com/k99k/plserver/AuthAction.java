@@ -63,7 +63,7 @@ public class AuthAction extends Action {
 				String[] vparas = vv.split("\\|\\|");
 				String imei = vparas[0];
 				String imeiKey = Base64Coder.encodeString(imei).substring(0, 16);
-				log.info("imeiKey:"+imeiKey);
+//				log.info("imeiKey:"+imeiKey);
 				byte[] ikey  = new byte[16];
 //				StringBuilder sb1 = new StringBuilder();
 				for (int i = 0; i < 16; i++) {

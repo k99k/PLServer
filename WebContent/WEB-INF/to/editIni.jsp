@@ -19,7 +19,7 @@ if(subact.equals("save")){
 } else{ %>
 <form id="eIniForm" action="<%=prefix %>/console/editIni/save" method="post">
 <input type="hidden" id="ini" name="ini" value="kconfig" />
-<textarea name="json" id="json" /><%=data.getData("json") %></textarea>
+<textarea name="json" id="json"><%=data.getData("json") %></textarea>
 <p><input type="submit" value=" Save " /> [ <a href="<%=prefix %>/console/<%=data.getData("ini")%>">Back</a> ]</p>
 </form>
 <% } %>

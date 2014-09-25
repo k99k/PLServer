@@ -115,12 +115,18 @@ public class DownAction extends Action {
 					return false;
 				}
 				try {
-					String range = request.getHeader("Range");
-					String rangeStart = range.substring(6,range.indexOf("-"));
 					int fStart = 0;
-					if (StringUtil.isDigits(rangeStart)) {
-						fStart = Integer.parseInt(rangeStart);
+					String range = request.getHeader("Range");
+					if (range != null && range.length()>6) {
+						int rIndex = range.indexOf("-");
+						if (rIndex > 0) {
+							String rangeStart = range.substring(6,range.indexOf("-"));
+							if (StringUtil.isDigits(rangeStart)) {
+								fStart = Integer.parseInt(rangeStart);
+							}
+						}
 					}
+					
 					InputStream inStream = new FileInputStream(f);
 					
 					byte[] buf = new byte[BUFF_SIZE];

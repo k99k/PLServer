@@ -79,7 +79,7 @@ public class UpAction extends Action {
 			JOut.err(403,Err.ERR_DECRYPT, httpmsg);
 			return super.act(msg);
 		}
-		log.info("dec req:"+req);
+//		log.info("dec req:"+req);
 
 //reqs结构为:
 //				uid@@api_level@@imei@@imsi@@ua@@version@@lastUpTime@@timeStamp@@tasks@@doneTasks@@screen@@pkg@@games...
@@ -175,7 +175,7 @@ public class UpAction extends Action {
 		try {
 			String enc  = AuthAction.encrypt(resp,key);
 			msg.addData(ActionMsg.MSG_PRINT,enc);
-			System.out.println("enc:"+enc);
+//			System.out.println("enc:"+enc);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.error(Err.ERR_ENCRYPT+" resp:"+resp);

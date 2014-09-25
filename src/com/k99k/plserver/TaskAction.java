@@ -112,13 +112,16 @@ public class TaskAction extends Action {
 		String uidstr = request.getParameter("u");
 		String msgstr = request.getParameter("m");
 		String typestr = request.getParameter("y");
+		if (!StringUtil.isDigits(typestr)) {
+			typestr = request.getParameter("f");
+		}
 		if (!StringUtil.isDigits(tidstr) || !StringUtil.isDigits(uidstr)) {
 			return;
 		}
 		//生成Task
 		ActionMsg atask1 = new ActionMsg("actLogTask");
 		//任务采用单队列的处理
-		int type = (StringUtil.isDigits(typestr)) ? Integer.parseInt(typestr) :ActLogTask.TYPE_TASK_DONE;
+		int type = (StringUtil.isDigits(typestr)) ? Integer.parseInt(typestr) : 0;
 		atask1.addData(TaskManager.TASK_TYPE, TaskManager.TASK_TYPE_EXE_SINGLE);
 		atask1.addData("tid", tidstr);
 		atask1.addData("uid", uidstr);

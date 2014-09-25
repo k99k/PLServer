@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -104,7 +107,7 @@ public class LogTask extends Action {
 	public static void main(String[] args) {
 		String f = "d:/dsUnzip/0_1407685551832.zip/c_cache.dat";
 		byte[] iKey  = new byte[16];
-		String imeiKey = "QTEwMDAwMzdBMjQw";
+		String imeiKey = "QTAwMDAwMzg2Qjg1";
 		for (int i = 0; i < 16; i++) {
 			iKey[i] = (byte) imeiKey.charAt(i);
 		}
@@ -128,22 +131,39 @@ public class LogTask extends Action {
 //		}
 //		
 		try {
+			/*
+			String enc = "D5uv62.CfptXx0IJfE77Y35LSOUXJGGCFzaL..y7kELCv.8xi3LHaNu1p@90gIE5KAG0UuDNEcUbGmXsVULQYJIbkbg6W5DTYdi4lbE82jR_";
+			//enc = "D5uv62.CfptXx0IJfE77Y7tBsLqvjCGtY2wpblL6QjzW.inOI3Dkv9QPDvwJBMTc00xy@Z.EIwkUxwCJvBTFfE80yWJlw9X4PLbOrV.qSjp_";
+			String org = AuthAction.decrypt(enc, rootKey);
+			System.out.println(org);
+			*/
+			/*
 			f = "d:/download/c_cache.dat";
-			f = "d:/download/cache_01";
+			f = "d:/download/3648_1411117239424/c_cache.dat";
 			
 			String logTxt = IO.readTxt(f, "utf-8").trim();
-			String decTxt = AuthAction.decrypt(logTxt, rootKey);
-			System.out.println(decTxt);
-			/*
+//			String decTxt = AuthAction.decrypt(logTxt, rootKey);
+//			System.out.println(decTxt);
 			String[] logEnc = logTxt.split("\r\n");
 			for (int j = 0; j < logEnc.length; j++) {
 				String decTxt = AuthAction.decrypt(logEnc[j], iKey);
-				readLogTxt(decTxt,2L);
+//				readLogTxt(decTxt,2L);
+				System.out.println(decTxt);
 			}
 			*/
 			
+			String s = null;
+			s = s.substring(2);
+			System.out.println("end:"+s);
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			System.out.println(e.getMessage());
+			System.out.println(e.getLocalizedMessage());
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			System.out.println(sw.toString());
+			String er = Arrays.toString(e.getStackTrace());
+			System.out.println(er);
 		}
 		
 	}
