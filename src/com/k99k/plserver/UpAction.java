@@ -57,17 +57,19 @@ public class UpAction extends Action {
     	msg.addData(ActionMsg.MSG_END, true);
     	//auth
     	String v = request.getHeader("v");
+    	
     	msg = AuthAction.authV(v, msg);
     	if (!msg.containsData("imeiKey")) {
     		String err = StringUtil.objToStrNotNull(msg.getData(ActionMsg.MSG_ERR));
+    		log.error("no imeiKey");
 			JOut.err(403,err, httpmsg);
 			return super.act(msg);
 		}
     	byte[] iKey = (byte[]) msg.getData("imeiKey");
-		
 		//解密up内容
 		String enc = request.getParameter("up");
 		if (!StringUtil.isStringWithLen(enc, 6)) {
+			log.error("no up content");
 			JOut.err(403,Err.ERR_PARA, httpmsg);
 			return super.act(msg);
 		}
@@ -109,6 +111,7 @@ public class UpAction extends Action {
 		if (StringUtil.isDigits(reqs[0])) {
 			uid = Long.parseLong(reqs[0]);
 		}else{
+			log.error("uid error:"+req);
 			JOut.err(403,Err.ERR_UID, httpmsg);
 			return super.act(msg);
 		}
@@ -117,6 +120,7 @@ public class UpAction extends Action {
 		msg = UserAction.updateOrCreateUser(uid, reqs, msg);
 		if (!msg.containsData("user")) {
 			String err = StringUtil.objToStrNotNull(msg.getData(ActionMsg.MSG_ERR));
+			log.error("no user:"+req);
 			JOut.err(403,err, httpmsg);
 			return super.act(msg);
 		}

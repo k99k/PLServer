@@ -126,7 +126,7 @@ public class DownAction extends Action {
 							if (StringUtil.isDigits(rangeStart)) {
 								fStart = Integer.parseInt(rangeStart);
 								len = len - fStart;
-								log.info("range:"+range+" fStart:"+fStart+" len:"+len);
+								log.info("file:"+file+" range:"+range+" fStart:"+fStart+" len:"+len);
 								response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);//206   
 								response.setHeader("Content-Range","bytes " + fStart + "-" + new Long(len -1).toString() + "/" + len);   
 							}

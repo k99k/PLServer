@@ -59,11 +59,14 @@ public class AuthAction extends Action {
 		if (StringUtil.isStringWithLen(v, 5)) {
 			try {
 				String vv = decrypt(v, rootkey);
+				if (vv  == null) {
+					log.error("decrypt ERROR:"+v);
+					return msg;
+				}
 				//TODO vparas第二个参数为时间，后期可以增加校验
 				String[] vparas = vv.split("\\|\\|");
 				String imei = vparas[0];
 				String imeiKey = Base64Coder.encodeString(imei).substring(0, 16);
-//				log.info("imeiKey:"+imeiKey);
 				byte[] ikey  = new byte[16];
 //				StringBuilder sb1 = new StringBuilder();
 				for (int i = 0; i < 16; i++) {
@@ -165,10 +168,8 @@ public class AuthAction extends Action {
 	  			cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
 	  			byte[] encrypted1 = Base64Coder.decode(sSrc);// 先用base64解密
 	  			byte[] original = cipher.doFinal(encrypted1);
-	  			
 	  			String originalString = new String(clearPadding(original), "utf-8");
 	//  			String originalString = new String(original, "utf-8");
-	  			
 	  			return originalString;
 	  		} catch (Exception ex) {
 	  			ex.printStackTrace();
