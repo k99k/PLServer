@@ -12,6 +12,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.catalina.connector.ClientAbortException;
 import org.apache.log4j.Logger;
 
 import com.k99k.khunter.Action;
@@ -104,17 +105,18 @@ public class DownAction extends Action {
 		File f = new File(localFileFullPath);
 		if (f.exists()) {
 			response.reset();
-			response.setContentType("application/x-msdownload");
+			response.setContentType("application/octet-stream");
+			response.setHeader("Accept-Ranges", "bytes");
 			response.addHeader("Content-Disposition", "attachment; filename=\"" + file  + "\"");
 			int len = (int)f.length();
-			response.setContentLength(len);
+			
 			if (len > 0) {
 				if (request.getHeader("test") != null) {
 					msg.addData(ActionMsg.MSG_PRINT, "");
-//					return super.act(msg);
+					response.setContentLength(len);
 					return false;
-				}
-				try {
+				}   
+				try {   
 					int fStart = 0;
 					String range = request.getHeader("Range");
 					if (range != null && range.length()>6) {
@@ -123,10 +125,16 @@ public class DownAction extends Action {
 							String rangeStart = range.substring(6,range.indexOf("-"));
 							if (StringUtil.isDigits(rangeStart)) {
 								fStart = Integer.parseInt(rangeStart);
+								len = len - fStart;
+								log.info("range:"+range+" fStart:"+fStart+" len:"+len);
+								response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);//206   
+								response.setHeader("Content-Range","bytes " + fStart + "-" + new Long(len -1).toString() + "/" + len);   
 							}
 						}
+					}else{
+						response.setStatus(HttpServletResponse.SC_OK);//200   
 					}
-					
+					response.setContentLength(len);
 					InputStream inStream = new FileInputStream(f);
 					
 					byte[] buf = new byte[BUFF_SIZE];
@@ -141,10 +149,17 @@ public class DownAction extends Action {
 					inStream.close();
 					servletOS.flush();
 					servletOS.close();
+					msg.addData("ActionMsg.MSG_NONE", true);
 					downOK = true;
 				} catch (IOException e) {
-					e.printStackTrace();
-					log.error(Err.ERR_FILE_DOWN+" file:"+file);
+					downOK = false;
+					if (e.getClass().equals(ClientAbortException.class)) {
+						//客户端取消下载
+						response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);//200  
+					}else{
+						e.printStackTrace();
+						log.error(Err.ERR_FILE_DOWN+" file:"+file);
+					}
 				}
 			}
 		}else{
