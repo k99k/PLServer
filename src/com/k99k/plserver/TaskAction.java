@@ -46,6 +46,14 @@ public class TaskAction extends Action {
 	public static final int TYPE_TAG = 2;
 	public static final int TYPE_LEVEL = 3;
 	
+	public static final int TASK_TYPE_DONE = 1;
+	public static final int TASK_TYPE_MORE_OPEN = 2;
+	public static final int TASK_TYPE_MORE_CLICK = 3;
+	public static final int TASK_TYPE_MORE_DOWN = 4;
+	public static final int TASK_TYPE_EXIT_CLICK = 5;
+	public static final int TASK_TYPE_PUSH_CLICK = 6;
+	public static final int TASK_TYPE_SERVER_DOWN = 7;
+	
 
 	static final Logger log = Logger.getLogger(TaskAction.class);
 

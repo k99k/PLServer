@@ -327,6 +327,9 @@ public class KObjColumn {
 			columnData = Long.parseLong(columnData.toString());
 			kobj.setProp(this.keyName, columnData);
 			return true;
+		}else if(this.type == 0 && (dType.equals(KOBJ_COLUMN_TYPES[1])||dType.equals(KOBJ_COLUMN_TYPES[4]))){
+			kobj.setProp(this.keyName, String.valueOf(columnData));
+			return true;
 		}else{
 			return false;
 		}

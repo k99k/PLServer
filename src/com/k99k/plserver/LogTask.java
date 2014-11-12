@@ -66,6 +66,7 @@ public class LogTask extends Action {
 			log.error(Err.ERR_LOG_ZIP_NO_FILE+" fileDir:"+tempPath);
 			return super.act(msg);
 		}
+		boolean allLogOK = true;
 		for (int i = 0; i < logs.length; i++) {
 			try {
 				String logTxt = IO.readTxt(logs[i].getAbsolutePath(), "utf-8");
@@ -80,9 +81,18 @@ public class LogTask extends Action {
 					uid = Long.parseLong(fArr[0]);
 				}
 				String[] logEnc = logTxt.split("\r\n");
+				boolean readLogOK = true;
 				for (int j = 0; j < logEnc.length; j++) {
 					String decTxt = AuthAction.decrypt(logEnc[j], iKey);
-					readLogTxt(decTxt,uid);
+					if(!readLogTxt(decTxt,uid)){
+						readLogOK = false;
+					}
+				}
+				if (readLogOK) {
+					//清除相关文件
+					logs[i].delete();
+				}else{
+					allLogOK = false;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -94,6 +104,12 @@ public class LogTask extends Action {
 				return super.act(msg);
 			}
 		}
+		//继续清理相关文件
+		if (allLogOK) {
+			dir.delete();
+			f.delete();
+		}
+		
 		return super.act(msg);
 	}
 	static final int LEVEL_D = 0;
@@ -172,14 +188,17 @@ public class LogTask extends Action {
 	 * 解密后的log数据按>>号拆分成单条处理
 	 * @param decTxt
 	 */
-	private static void readLogTxt(String decTxt,long uid){
+	private static boolean readLogTxt(String decTxt,long uid){
 		String[] lines = decTxt.split(NEWlINE);
 		StringBuilder sb = new StringBuilder();
+		boolean readOK = true;
 		for (int i = 0; i < lines.length; i++) {
 			String line = lines[i];
 			if (line.startsWith(">>")) {
 				if (sb.length()>0) {
-					logToDB(sb.toString(),uid);
+					if(!logToDB(sb.toString(),uid)){
+						readOK = false;
+					}
 				}
 				sb = new StringBuilder();
 			}else{
@@ -188,8 +207,11 @@ public class LogTask extends Action {
 			sb.append(line);
 		}
 		if (sb.length()>0) {
-			logToDB(sb.toString(),uid);
+			if(!logToDB(sb.toString(),uid)){
+				readOK = false;
+			}
 		}
+		return readOK;
 	}
 	
 	
@@ -197,8 +219,9 @@ public class LogTask extends Action {
 	/**
 	 * 将一条数据存入数据库
 	 * @param line
+	 * @return 是否成功
 	 */
-	private static void logToDB(String line,long uid){
+	private static boolean logToDB(String line,long uid){
 //		System.out.println("["+txt+"]");
 		String[] arr = line.split(SPLIT);
 		//字段为:
@@ -211,7 +234,7 @@ public class LogTask extends Action {
 		//长度验证,只可能大于6(不保证msg里面没有||号和\r\n)
 		if (arr.length < 6) {
 			log.error(Err.ERR_LOG_LINE+" log line:"+line);
-			return;
+			return false;
 		}
 		KObject logobj = new KObject();
 		logobj.setId(dao.getIdm().nextId());
@@ -220,32 +243,39 @@ public class LogTask extends Action {
 			logobj.setCreateTime(Long.parseLong(time));
 		}else{
 			log.error(Err.ERR_LOG_TIME+" log line:"+line);
-			return;
+			return false;
 		}
 		if (StringUtil.isDigits(arr[1])) {
 			logobj.setLevel(Integer.parseInt(arr[1]));
 		}else{
 			log.error(Err.ERR_LOG_TIME+" log line:"+line);
-			return;
+			return false;
 		}
 		if (StringUtil.isStringWithLen(arr[2], 1)) {
 			logobj.setProp("logTag", arr[2]);
 		}else{
 			log.error(Err.ERR_LOG_TAG+" log line:"+line);
-			return;
+			return false;
 		}
 		if (StringUtil.isDigits(arr[3])) {
 			logobj.setProp("act", Integer.parseInt(arr[3]));
 		}else{
 			log.error(Err.ERR_LOG_ACT+" log line:"+line);
-			return;
+			return false;
 		}
 		logobj.setProp("pkg",arr[4]);
 		if (StringUtil.isStringWithLen(arr[5],1)) {
-			String[] mArr = arr[5].split("_");
+			String rest = arr[5];
+			//fix for version 1's bug
+			if (rest.indexOf("5007113_0@@") >= 0) {
+				rest = rest.replace("5007113_0@@", "5007113_0_@@");
+			}
+			
+			
+			String[] mArr = rest.split("_");
 			if (mArr.length<2 || !StringUtil.isDigits(mArr[0]) || !StringUtil.isDigits(mArr[1])) {
 				log.error(Err.ERR_LOG_MSG+" log line:"+line);
-				return;
+				return false;
 			}
 			logobj.setProp("gid", mArr[0]);
 			logobj.setProp("cid", mArr[1]);
@@ -260,13 +290,14 @@ public class LogTask extends Action {
 			}
 		}else{
 			log.error(Err.ERR_LOG_MSG+" log line:"+line);
-			return;
+			return false;
 		}
 		logobj.setProp("uid", uid);
 		if(!dao.save(logobj)){
 			log.error(Err.ERR_LOG_SAVETODB+" log line:"+line);
-			return;
+			return false;
 		}
+		return true;
 	}
 	
 	private static final int IO_BUFFER_SIZE = 1024 * 4;

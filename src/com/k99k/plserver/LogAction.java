@@ -38,11 +38,18 @@ public class LogAction extends Action {
 
 	@Override
 	public ActionMsg act(ActionMsg msg) {
+		
 		HttpActionMsg httpmsg = (HttpActionMsg)msg;
-    	HttpServletRequest request =  httpmsg.getHttpReq();
+		HttpServletRequest request =  httpmsg.getHttpReq();
+		
     	//无action链
-    	msg.addData(ActionMsg.MSG_END, true);
+		msg.addData(ActionMsg.MSG_END, true);
     	String v = request.getHeader("v");
+    	//FIXME 临时暂停日志记录
+//    	if (v != null) {
+//    		JOut.err(403,String.valueOf(Err.ERR_LOG_STOP), httpmsg);
+//    		return super.act(msg);
+//		}
     	msg  = AuthAction.authV(v, httpmsg);
     	if (!msg.containsData("imeiKey")) {
     		String err = StringUtil.objToStrNotNull(msg.getData(ActionMsg.MSG_ERR));
@@ -72,7 +79,7 @@ public class LogAction extends Action {
 		atask1.addData("path", this.savePath);
 		TaskManager.makeNewTask("logTask:"+file, atask1);
 	
-		log.info("log upload ok:"+file);
+		//log.info("log upload ok:"+file);
 		
 		return super.act(msg);
 	}

@@ -258,11 +258,11 @@ public class PS extends HttpServlet {
 		//int keyVersion = (Integer.parseInt(kVer)-17)/27;
 		String req = null;
 		String imeiKey = null;
+		boolean isOldVersion = false;
 		try {
 			String rkey = decrypt(kVer,rootkey);
 //			System.out.println("kVer:"+kVer+" rkey:"+rkey);
 			String[] rkeys = rkey.split("\\|\\|");
-			//TODO 注意这里解密先需要确定KEY
 			imeiKey = Base64Coder.encodeString(rkeys[0]).substring(0, 16);
 			byte[] ikey  = new byte[16];
 			for (int i = 0; i < 16; i++) {
@@ -270,24 +270,32 @@ public class PS extends HttpServlet {
 			}
 			req = decrypt(enc,ikey);
 //			System.out.println("dec:"+req);
-			String[] reqs = req.split("@@");
-			System.out.println("imeiKey:"+imeiKey+" dec:"+req);
+//			String[] reqs = req.split("@@");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.getWriter().println(ERR_DECRYPT);
 			return;
 		}
 		String[] reqs = req.split(SPLIT_STR);
-		//TODO 获取或生成用户信息和taskList，根据用户具体情况修改taskList返回
+		if (StringUtil.isDigits(reqs[5]) && Integer.parseInt(reqs[5]) < 3) {
+			isOldVersion = true;
+		}
+//			System.out.println("imeiKey:"+imeiKey+" dec:"+req);
 		long uid = 1;
 		
 		//实现ORDER_SYNC_TASK
 		StringBuilder sb = new StringBuilder();
 		sb.append(uid).append(SPLIT_STR);
 		sb.append(ORDER_SYNC_TASK).append(SPLIT_STR)
-		.append(this.taskDownUrl).append(SPLIT_STR)
+		.append(this.taskDownUrl).append(SPLIT_STR);
 		//这里仅使用两个测试任务ID,1为toast,2为下载view数据
-		.append("7").append(SPLIT_STR)
+		if (isOldVersion) {
+			sb.append("7");
+		}else{
+			sb.append("_");
+		}
+		sb.append(SPLIT_STR)
 		.append(this.currentKeyVersion);
 		String resp = null;
 		try {

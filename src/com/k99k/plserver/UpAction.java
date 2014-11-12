@@ -137,13 +137,13 @@ public class UpAction extends Action {
 		}
 		
 		//处理任务
-		String tasks = TaskAction.synTasks(user,httpmsg)+"@@_";
+		String tasks = TaskAction.synTasks(user,httpmsg);
 		if (StringUtil.isStringWithLen(tasks, 1)) {
 			msg = this.resp(this.makeResp(uid, tasks,this.taskDownUrl), iKey, httpmsg);
 			return super.act(msg);
 		}
 		//无任务
-		msg = this.resp(this.makeResp(uid, "@@_",this.taskDownUrl), iKey, httpmsg);
+		msg = this.resp(this.makeResp(uid, "",this.taskDownUrl), iKey, httpmsg);
 		
 		
 //		Object lastAct = msg.getData(ActionMsg.MSG_LAST_ACTION);
@@ -202,6 +202,10 @@ public class UpAction extends Action {
 		sb.append(ORDER_SYNC_TASK).append(SPLIT_STR)
 		.append(taskDownUrl).append(SPLIT_STR)
 		.append(tasks);
+		sb.append(SPLIT_STR);
+//		sb.append("_");
+		sb.append("maxLogSleepTime==86400000,maxLogSize==512000");
+		sb.append(SPLIT_STR).append("_");
 		return sb.toString();
 	}
 

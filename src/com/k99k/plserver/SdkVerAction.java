@@ -34,8 +34,8 @@ public class SdkVerAction extends Action {
 	
 	static DaoInterface dao;
 	
-	static int currentSdkVer = 1;
-	static int currentSdkVerTid = -1;
+	static int currentSdkVer = 5;
+	static int currentSdkVerTid = 15;
 	static HashMap<String,Object> field_tid = new HashMap<String, Object>(2);
 	static HashMap<String,Object> sort_id_desc = new HashMap<String, Object>(2);
 

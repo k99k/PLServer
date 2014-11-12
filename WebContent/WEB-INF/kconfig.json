@@ -58,17 +58,17 @@
 		{
 			"_actName":"PS",
 			"_class":"com.k99k.plserver.UpAction",
-			"taskDownUrl":"http://202.102.105.15:8080/PLServer/task"
+			"taskDownUrl":"http://180.96.63.70:12370/plserver/task"
 		},
 		{
 			"_actName":"PL",
 			"_class":"com.k99k.plserver.LogAction",
-			"savePath":"d:/dslogs/"
+			"savePath":"d:/plserver/dslogs/"
 		},
 		{
 			"_actName":"logTask",
 			"_class":"com.k99k.plserver.LogTask",
-			"unzipPath":"d:/dsUnzip/"
+			"unzipPath":"d:/plserver/dsUnzip/"
 		},
 		{
 			"_actName":"auth",
@@ -81,7 +81,7 @@
 		{
 			"_actName":"task",
 			"_class":"com.k99k.plserver.TaskAction",
-			"downloadLocalPath":"d:/dats/"
+			"downloadLocalPath":"d:/plserver/dats/"
 		},
 		{
 			"_actName":"sdkVer",
@@ -94,8 +94,13 @@
 		{
 			"_actName":"down",
 			"_class":"com.k99k.plserver.DownAction",
-			"downloadLocalPath":"d:/dats/",
+			"downloadLocalPath":"d:/plserver/dats/",
 			"redirectPath":"http://180.96.63.70:12370/plserver/down/"
+		},
+		{
+			"_actName":"sync",
+			"_class":"com.k99k.plserver.SyncTaskAction",
+			"synFilePath":"d:/plserver/dats/syn.json"
 		}
 	],
 	"io":{
