@@ -132,7 +132,7 @@ public class UserAction extends Action {
 	static final KObject findUser(long uid,String[] reqs,ActionMsg msg){
 		KObject user = null;
 		//判断uid是否存在
-		if (uid == 0) {
+		if (uid == 0 || uid == 1) {
 			//是否在库中有对应的imei或imsi
 			//reqs结构为:
 //			uid@@api_level@@imei@@imsi@@ua@@version@@lastUpTime@@timeStamp@@tasks@@doneTasks@@screen@@pkg@@games
@@ -175,7 +175,7 @@ public class UserAction extends Action {
 		if (user != null) {
 			return user;
 		}else{
-			log.error(Err.ERR_UID_NOT_FOUND+" uid:"+uid);
+//			log.error(Err.ERR_UID_NOT_FOUND+" uid:"+uid);
 			msg.addData(ActionMsg.MSG_ERR, Err.ERR_UID_NOT_FOUND);
 		}
 		return user;

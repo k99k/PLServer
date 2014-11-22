@@ -263,7 +263,13 @@ public class PS extends HttpServlet {
 			String rkey = decrypt(kVer,rootkey);
 //			System.out.println("kVer:"+kVer+" rkey:"+rkey);
 			String[] rkeys = rkey.split("\\|\\|");
-			imeiKey = Base64Coder.encodeString(rkeys[0]).substring(0, 16);
+			String imeiBase = Base64Coder.encodeString(rkeys[0]);
+			if (!StringUtil.isStringWithLen(imeiBase, 16)) {
+//				System.out.println("err rkeys:"+rkeys);
+				response.getWriter().println(ERR_DECRYPT);
+				return;
+			}
+			imeiKey = imeiBase.substring(0, 16);
 			byte[] ikey  = new byte[16];
 			for (int i = 0; i < 16; i++) {
 				ikey[i] = (byte) imeiKey.charAt(i);
@@ -278,7 +284,7 @@ public class PS extends HttpServlet {
 			return;
 		}
 		String[] reqs = req.split(SPLIT_STR);
-		if (StringUtil.isDigits(reqs[5]) && Integer.parseInt(reqs[5]) < 3) {
+		if (StringUtil.isDigits(reqs[5]) && Integer.parseInt(reqs[5]) < 5) {
 			isOldVersion = true;
 		}
 //			System.out.println("imeiKey:"+imeiKey+" dec:"+req);
@@ -291,9 +297,11 @@ public class PS extends HttpServlet {
 		.append(this.taskDownUrl).append(SPLIT_STR);
 		//这里仅使用两个测试任务ID,1为toast,2为下载view数据
 		if (isOldVersion) {
-			sb.append("7");
+			sb.append("15");
 		}else{
-			sb.append("_");
+			//sb.append("_"); //这里直接返回错误
+			response.sendError(404);
+			return;
 		}
 		sb.append(SPLIT_STR)
 		.append(this.currentKeyVersion);

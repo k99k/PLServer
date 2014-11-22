@@ -68,7 +68,7 @@ public class Task implements Runnable{
 		//执行Action
 		this.actionMsg = ActionManager.findAction(this.actionMsg.getActitonName()).act(actionMsg);
 		//加入本Task处理的完成时间
-		actionMsg.addData("task_"+this.name, new Date().toString());
+		actionMsg.addData("task_"+this.name, String.valueOf(System.currentTimeMillis()));
 		//清除taskMap的引用 
 		TaskManager.removeFromTaskMap(this.name);
 		

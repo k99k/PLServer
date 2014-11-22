@@ -81,7 +81,7 @@ data:{
 		
 		String subact = KFilter.actPath(msg, 2, "");
 		if (subact.equals("syn")) {
-			/*
+			
 			String v = request.getHeader("v");
 			msg = AuthAction.authV(v, msg);
 	    	if (!msg.containsData("imeiKey")) {
@@ -111,7 +111,7 @@ data:{
 			if (this.ver > clinetVer) {
 				//需要更新
 			}
-			*/
+			
 			//输出加密的内容
 			String out = "";
 			try {
@@ -121,8 +121,8 @@ data:{
 				if (preCount >= this.downPres.length) {
 					this.preCount = 0;
 				}
-				out = json;
-//				out = AuthAction.encrypt(json,iKey);
+//				out = json;
+				out = AuthAction.encrypt(json,iKey);
 			} catch (Exception e) {
 				JOut.err(500,Err.ERR_ENCRYPT, httpmsg);
 				return super.act(msg);
@@ -132,6 +132,8 @@ data:{
 		}else if(subact.equals("reinit-keel")){
 			this.init();
 			msg.addData(ActionMsg.MSG_PRINT, this.sync);
+		}else{
+			JOut.err(404, httpmsg);
 		}
 		
 		return super.act(msg);

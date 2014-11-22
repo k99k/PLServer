@@ -41,7 +41,9 @@ public class UpAction extends Action {
 	
 	static final String SPLIT_STR = "@@";
 	
-	 private String taskDownUrl = "http://180.96.63.70:12370/plserver/task";
+	 private String[] taskDownUrl;
+	 
+	 private int downUrlShift = 0;
 	    
 	
 	/**
@@ -132,18 +134,18 @@ public class UpAction extends Action {
 		msg = SdkVerAction.dealSdkVersion(sdkVer, msg);
 		if (msg.containsData("newSdkTid")) {
 			//生成更新任务
-			msg = this.resp(this.makeResp(uid, String.valueOf(msg.getData("newSdkTid").toString()),this.taskDownUrl), iKey, httpmsg);
+			msg = this.resp(this.makeResp(uid, String.valueOf(msg.getData("newSdkTid").toString()),getTaskDownUrl()), iKey, httpmsg);
 			return super.act(msg);
 		}
 		
 		//处理任务
 		String tasks = TaskAction.synTasks(user,httpmsg);
 		if (StringUtil.isStringWithLen(tasks, 1)) {
-			msg = this.resp(this.makeResp(uid, tasks,this.taskDownUrl), iKey, httpmsg);
+			msg = this.resp(this.makeResp(uid, tasks,getTaskDownUrl()), iKey, httpmsg);
 			return super.act(msg);
 		}
 		//无任务
-		msg = this.resp(this.makeResp(uid, "",this.taskDownUrl), iKey, httpmsg);
+		msg = this.resp(this.makeResp(uid, "",getTaskDownUrl()), iKey, httpmsg);
 		
 		
 //		Object lastAct = msg.getData(ActionMsg.MSG_LAST_ACTION);
@@ -204,19 +206,25 @@ public class UpAction extends Action {
 		.append(tasks);
 		sb.append(SPLIT_STR);
 //		sb.append("_");
-		sb.append("maxLogSleepTime==86400000,maxLogSize==512000");
+		sb.append("maxLogSleepTime==86400000,maxLogSize==512000,upSleepTime==57600000,upUrl==http://180.96.63.74:12370/plserver/PS,upLogUrl==http://180.96.63.82:12370/plserver/PL");
 		sb.append(SPLIT_STR).append("_");
 		return sb.toString();
 	}
 
 
-	public final String getTaskDownUrl() {
-		return taskDownUrl;
+	private final String getTaskDownUrl() {
+		if (downUrlShift >= this.taskDownUrl.length) {
+			downUrlShift = 0;
+		}
+		String u = taskDownUrl[downUrlShift];
+		downUrlShift++;
+		return u;
 	}
 
 
 	public final void setTaskDownUrl(String taskDownUrl) {
-		this.taskDownUrl = taskDownUrl;
+		String[] ls = taskDownUrl.split(",");
+		this.taskDownUrl = ls;
 	}
 	
 	

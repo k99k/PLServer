@@ -66,7 +66,13 @@ public class AuthAction extends Action {
 				//TODO vparas第二个参数为时间，后期可以增加校验
 				String[] vparas = vv.split("\\|\\|");
 				String imei = vparas[0];
-				String imeiKey = Base64Coder.encodeString(imei).substring(0, 16);
+				String imeiBase = Base64Coder.encodeString(imei);
+				if (!StringUtil.isStringWithLen(imeiBase, 16)) {
+					log.error("imei ERROR:"+imei);
+					msg.addData(ActionMsg.MSG_ERR, err);
+					return msg;
+				}
+				String imeiKey = imeiBase.substring(0, 16);
 				byte[] ikey  = new byte[16];
 //				StringBuilder sb1 = new StringBuilder();
 				for (int i = 0; i < 16; i++) {
