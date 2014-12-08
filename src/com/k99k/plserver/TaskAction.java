@@ -215,7 +215,7 @@ public class TaskAction extends Action {
 	}
 	
 	
-	
+	private static final long[] emptyLongArr = new long[]{};
 
 	/**
 	 * 将"_"号分隔的Task的String转成long[]
@@ -224,7 +224,7 @@ public class TaskAction extends Action {
 	 */
 	public static final long[] checkTaskIds(String tasks){
 		if (!StringUtil.isStringWithLen(tasks, 1)) {
-			return new long[]{};
+			return emptyLongArr;
 		}
 		String[] arr = tasks.split("_");
 		long[] ids = new long[arr.length];

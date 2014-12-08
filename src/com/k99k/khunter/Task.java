@@ -3,7 +3,6 @@
  */
 package com.k99k.khunter;
 
-import java.util.Date;
 
 /**
  * Task 异步操作,与Action同步操作相区别

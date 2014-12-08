@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -160,7 +159,7 @@ public final class TaskManager {
 	 * 添加一个立即执行的任务到立即处理的多线程线程池
 	 * @param task
 	 */
-	private static void addExeTask(Task task){
+	public static void addExeTask(Runnable task){
 		exePool.execute(task);
 	}
 	
@@ -213,7 +212,7 @@ public final class TaskManager {
 	 * 添加一个立即处理的任务到单线程池
 	 * @param task Task
 	 */
-	private static void addSingleTask(Task task){
+	public static void addSingleTask(Runnable task){
 		singleExePool.execute(task);
 	}
 	

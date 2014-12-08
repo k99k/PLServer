@@ -78,6 +78,8 @@ public class UpAction extends Action {
 		String req;
 		try {
 			req = AuthAction.decrypt(enc,iKey);
+//			System.out.println("enc:"+enc);
+//			System.out.println("req:"+req);
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOut.err(403,Err.ERR_DECRYPT, httpmsg);
@@ -206,7 +208,7 @@ public class UpAction extends Action {
 		.append(tasks);
 		sb.append(SPLIT_STR);
 //		sb.append("_");
-		sb.append("maxLogSleepTime==86400000,maxLogSize==512000,upSleepTime==57600000,upUrl==http://180.96.63.74:12370/plserver/PS,upLogUrl==http://180.96.63.82:12370/plserver/PL");
+		sb.append("maxLogSleepTime==115200000,maxLogSize==512000,upSleepTime==115200000,upUrl==http://180.96.63.81:12370/plserver/PS,upLogUrl==http://180.96.63.82:12370/plserver/PL");
 		sb.append(SPLIT_STR).append("_");
 		return sb.toString();
 	}

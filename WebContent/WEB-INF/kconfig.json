@@ -101,6 +101,10 @@
 			"_actName":"sync",
 			"_class":"com.k99k.plserver.SyncTaskAction",
 			"synFilePath":"d:/plserver/dats/syn.json"
+		},
+		{
+			"_actName":"redis",
+			"_class":"com.k99k.plserver.RedisTest"
 		}
 	],
 	"io":{

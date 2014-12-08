@@ -32,20 +32,21 @@ public class RejectedTaskHandler implements RejectedExecutionHandler {
 	 */
 	@Override
 	public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+		r = null;
 		//使用原线程来执行
-		executor.execute(r);
+//		executor.execute(r);
 		// 进行日志记录
-		log.error("TASK redo! task:"+r.toString());
-		StringBuilder sb = new StringBuilder();
-		sb.append("ThreadPoolExecutor :").append(this.name).append("\n");
-		sb.append("[ isShutdown:").append(executor.isShutdown());
-		sb.append(" isTerminated:").append(executor.isTerminated());
-		sb.append(" activeCount:").append(executor.getActiveCount());
-		sb.append(" taskCount:").append(executor.getTaskCount());
-		sb.append(" corePoolSize:").append(executor.getCorePoolSize());
-		sb.append(" completedTaskCount:").append(executor.getCompletedTaskCount());
-		sb.append(" keepAliveTime:").append(executor.getKeepAliveTime(TimeUnit.SECONDS)).append(" ]");
-		log.error(sb.toString());
+//		log.error("TASK redo! task:"+r.toString());
+//		StringBuilder sb = new StringBuilder();
+//		sb.append("ThreadPoolExecutor :").append(this.name).append("\n");
+//		sb.append("[ isShutdown:").append(executor.isShutdown());
+//		sb.append(" isTerminated:").append(executor.isTerminated());
+//		sb.append(" activeCount:").append(executor.getActiveCount());
+//		sb.append(" taskCount:").append(executor.getTaskCount());
+//		sb.append(" corePoolSize:").append(executor.getCorePoolSize());
+//		sb.append(" completedTaskCount:").append(executor.getCompletedTaskCount());
+//		sb.append(" keepAliveTime:").append(executor.getKeepAliveTime(TimeUnit.SECONDS)).append(" ]");
+//		log.error(sb.toString());
 		
 	}
 

@@ -192,7 +192,7 @@ public class MongoDao implements DaoInterface{
 			}
 	        return (HashMap<String,Object>)o;
 		} catch (Exception e) {
-			log.error("findOneMap error!", e);
+//			log.error("findOneMap error!", e);
 			return null;
 		}
 	}
@@ -213,7 +213,7 @@ public class MongoDao implements DaoInterface{
 			}
 			return null;
 		} catch (Exception e) {
-			log.error("findOneMap error!", e);
+//			log.error("findOneMap error!", e);
 			return null;
 		}
 	}
@@ -358,7 +358,7 @@ public class MongoDao implements DaoInterface{
 	        }
 	        return list;
 		} catch (Exception e) {
-			log.error("query error!", e);
+			e.printStackTrace();
 			return null;
 		}
 		
@@ -503,7 +503,7 @@ public class MongoDao implements DaoInterface{
 			DBCollection coll = this.dataSource.getColl(tableName);
 			coll.save(new MongoWrapper(kObj));
 		} catch (Exception e) {
-			log.error("save error!", e);
+//			log.error("save error!", e);
 			return false;
 		}
 		return true;

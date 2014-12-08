@@ -4,8 +4,12 @@
 package com.k99k.plserver;
 
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +41,7 @@ public class AuthAction extends Action {
     private static byte[] ivk = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     //private byte[] rkey = {43, 23, 13, -32, -58, 83, 3, -34, -87, 56, 19, 90, 28, -102, 15, 40};
     
-
+    private static IvParameterSpec iv = new IvParameterSpec(ivk);
 
 	@Override
 	public ActionMsg act(ActionMsg msg) {
@@ -58,7 +62,7 @@ public class AuthAction extends Action {
 		int err = Err.ERR_AUTH;
 		if (StringUtil.isStringWithLen(v, 5)) {
 			try {
-				String vv = decrypt(v, rootkey);
+				String vv = decryptWithRoot(v);//decrypt(v, rootkey);
 				if (vv  == null) {
 					log.error("decrypt ERROR:"+v);
 					return msg;
@@ -101,7 +105,7 @@ public class AuthAction extends Action {
 	  		cipher = Cipher.getInstance("AES/CBC/NoPadding");
 	  		
 	  		SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
-	  		IvParameterSpec iv =  new IvParameterSpec(ivk);//new IvParameterSpec(ivParameter.getBytes());// 使用CBC模式，需要一个向量iv，可增加加密算法的强度
+//	  		IvParameterSpec iv =  new IvParameterSpec(ivk);//new IvParameterSpec(ivParameter.getBytes());// 使用CBC模式，需要一个向量iv，可增加加密算法的强度
 	  		cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
 	  		byte[] encrypted = cipher.doFinal(srcBytes);
 	  		return Base64Coder.encode(encrypted);
@@ -161,7 +165,29 @@ public class AuthAction extends Action {
 		
 	}
 
+	private static Cipher rootCipher;
+	static{
+		try {
+			rootCipher = Cipher.getInstance("AES/CBC/NoPadding");
+			SecretKeySpec skeySpec = new SecretKeySpec(rootkey, "AES");
+			rootCipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
+	public static final String decryptWithRoot(String sSrc){
+		try {
+  			byte[] encrypted1 = Base64Coder.decode(sSrc);// 先用base64解密
+  			byte[] original = rootCipher.doFinal(encrypted1);
+  			String originalString = new String(clearPadding(original), "utf-8");
+//  			String originalString = new String(original, "utf-8");
+  			return originalString;
+  		} catch (Exception ex) {
+  			ex.printStackTrace();
+  			return null;
+  		}
+	}
 
 	// 解密
 	  	public static final String decrypt(String sSrc,byte[] key) throws Exception {
@@ -170,7 +196,7 @@ public class AuthAction extends Action {
 	//  			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 	  			Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
 	  			
-	  			IvParameterSpec iv = new IvParameterSpec(ivk);//new IvParameterSpec(ivParameter.getBytes());
+//	  			IvParameterSpec iv = new IvParameterSpec(ivk);//new IvParameterSpec(ivParameter.getBytes());
 	  			cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
 	  			byte[] encrypted1 = Base64Coder.decode(sSrc);// 先用base64解密
 	  			byte[] original = cipher.doFinal(encrypted1);

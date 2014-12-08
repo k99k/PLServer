@@ -16,6 +16,7 @@ import com.k99k.khunter.ActionMsg;
 import com.k99k.khunter.DaoInterface;
 import com.k99k.khunter.DaoManager;
 import com.k99k.khunter.KObject;
+import com.k99k.khunter.TaskManager;
 import com.k99k.tools.JSON;
 import com.k99k.tools.StringUtil;
 
@@ -110,14 +111,24 @@ public class UserAction extends Action {
 			user.setProp("gcidString", reqs[12]);
 			user.setProp("servState", reqs[13]);
 		}
-		if(!dao.save(user)){
-			log.error(Err.ERR_ADD_USER+" uid:"+user.getId());
-			msg.addData(ActionMsg.MSG_ERR, Err.ERR_ADD_USER);
-			return msg;
-		}
+		
+		//生成Task
+		UpTaskA atask = new UpTaskA(user,dao);
+		TaskManager.addExeTask(atask);
+//				ActionMsg atask1 = new ActionMsg("upTask");
+//				atask1.addData(TaskManager.TASK_TYPE, TaskManager.TASK_TYPE_EXE_POOL);
+//				atask1.addData("user", user);
+//				TaskManager.makeNewTask("upTask_"+System.currentTimeMillis(), atask1);
+		
+//		if(!dao.save(user)){
+//			log.error(Err.ERR_ADD_USER+" uid:"+user.getId());
+//			msg.addData(ActionMsg.MSG_ERR, Err.ERR_ADD_USER);
+//			return msg;
+//		}
 		msg.addData("user", user);
 		return msg;
 	}
+	
 	
 	static final void setScreenProp(KObject user,String screen){
 		String[] arr = screen.split("_");
@@ -159,6 +170,7 @@ public class UserAction extends Action {
 					return user;
 				}
 			}
+			/*
 			if (StringUtil.isStringWithLen(reqs[3], 5)) {
 				q.clear();
 				q.put("imsi", reqs[3]);
@@ -167,6 +179,7 @@ public class UserAction extends Action {
 					return user;
 				}
 			}
+			*/
 			//创建新用户
 			return null;
 			
